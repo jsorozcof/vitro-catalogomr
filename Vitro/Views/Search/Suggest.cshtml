@@ -1,0 +1,42 @@
+﻿@model Vitro.Models.SugerenciaViewModel
+
+@{
+    ViewBag.Title = "Sugerencias";
+}
+
+<h2 class="text-upper h1">@ViewBag.Title</h2>
+<div class="row" ng-app="app" ng-controller="searchController">
+    <div class="cell-md-6">
+        @using (Html.BeginForm("Suggest", "Search", FormMethod.Post, new { }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                @Html.LabelFor(x => x.Marca)
+                @Html.TextBoxFor(x => x.Marca)
+                @Html.ValidationMessageFor(x => x.Marca, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.Modelo)
+                @Html.TextBoxFor(x => x.Modelo)
+                @Html.ValidationMessageFor(x => x.Modelo, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.TipoParte)
+                @Html.TextBoxFor(x => x.TipoParte)
+                @Html.ValidationMessageFor(x => x.TipoParte, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.Descripcion)
+                @Html.TextAreaFor(x => x.Descripcion)
+                @Html.ValidationMessageFor(x => x.Descripcion, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                <button type="submit" class="button fg-white" style="background-color: #0057b8;">ENVIAR</button>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,54 @@
+﻿@model  Vitro.Models.PromocionesViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2 class="text-upper h1">Promociones</h2>
+<div class="grid h-vh-100">
+    <div class="row">
+        <div class="cell-12">
+            <ul data-role="tabs" data-expand="true">
+                <li><a href="#download"><i class="mif-download icon fg-blue"></i>DESCARGAR PLANTILLA DE PROMOCIONES</a></li>
+                <li><a href="#upload"><i class="mif-upload icon fg-red"></i>CARGAR LISTA DE PROMOCIONES</a></li>
+                <li><a href="@Url.Action("Details","Promociones")"><i class="mif-eye fg-green"></i> PROMOCIONES</a></li>
+            </ul>
+            <div class="border bd-default no-border-top p-2">
+                <div id="download">
+                    <div class="row cell-6">
+                        @using (Html.BeginForm("DownloadTemplate", "Promociones", FormMethod.Post, new { }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label>PRODUCTOS</label>
+                                <select name="productos[]" id="productos[]" data-role="select" multiple>
+                                    @foreach (var prod in Model.ProductosList)
+                                    {
+                                        <option value="@prod.ProductoId">(@prod.SAP) @prod.Descripcion</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="button primary">DESCARGAR</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div id="upload">
+                    <div class="row cell-6">
+                        @using (Html.BeginForm("Upload", "Promociones", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label>SELECCIONE PLANTILLA DE PROMOCIONES</label>
+                                <input type="file" name="file" id="file" data-role="file" />
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="button primary">CARGAR</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

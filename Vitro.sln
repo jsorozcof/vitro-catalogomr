@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vitro", "Vitro\Vitro.csproj", "{29E07C58-95CD-4A6E-9FBA-6963E42D6420}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VitroSql", "VitroSql\VitroSql.csproj", "{B451C917-433E-46FF-B45F-5E47D93BA52B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VitroCore", "VitroCore\VitroCore.csproj", "{CA8D5CAB-D801-447D-B827-9E2FDDBF8D74}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29E07C58-95CD-4A6E-9FBA-6963E42D6420}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29E07C58-95CD-4A6E-9FBA-6963E42D6420}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29E07C58-95CD-4A6E-9FBA-6963E42D6420}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29E07C58-95CD-4A6E-9FBA-6963E42D6420}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B451C917-433E-46FF-B45F-5E47D93BA52B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B451C917-433E-46FF-B45F-5E47D93BA52B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B451C917-433E-46FF-B45F-5E47D93BA52B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B451C917-433E-46FF-B45F-5E47D93BA52B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA8D5CAB-D801-447D-B827-9E2FDDBF8D74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA8D5CAB-D801-447D-B827-9E2FDDBF8D74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA8D5CAB-D801-447D-B827-9E2FDDBF8D74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA8D5CAB-D801-447D-B827-9E2FDDBF8D74}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F942151-FB3B-4040-9802-0B02228DAEAD}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,161 @@
+﻿@model Vitro.Models.DetailsProductoViewModel
+@{
+    ViewBag.Title = "Detalles de Producto";
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/Scripts/lightgallery/css/lightgallery.min.css" />
+    <link rel="stylesheet" href="~/Scripts/lightgallery/css/lg-transitions.min.css" />
+    <link rel="stylesheet" href="~/Scripts/lightgallery/css/lg-fb-comment-box.min.css" />
+}
+<h2 class="text-upper h1">@ViewBag.Title</h2>
+<ul class="breadcrumbs">
+    <li class="page-item"><a href="@Url.Action("Index","Producto")" class="page-link"> Productos</a></li>
+    <li class="page-item"><a href="#" class="page-link">Detalles</a></li>
+</ul>
+<hr />
+<div class="row h-vh-100">
+    <div class="cell-md-8">
+        <table class="table" data-role="table" data-show-pagination="false" data-show-table-info="false" data-show-search="false" data-show-rows-steps="false" data-horizontal-scroll="true">
+            <thead>
+                <tr>
+                    <th>CÓDIGO SAP</th>
+                    <th>CÓDIGO NAGS</th>
+                    <th>MARCA</th>
+                    <th>MODELO</th>
+                    <th>AÑO INICIAL</th>
+                    <th>AÑO FINAL</th>
+                    <th>TIPO DE PARTE</th>
+                    <th>TIPO DE VIDRIO</th>
+                    <th>PERFORACIÓN</th>
+                    <th>ANCHO</th>
+                    <th>ALTO</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Html.DisplayFor(x => x.Producto.SAP)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.NAGS)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Modelo.Marca.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Modelo.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.StartYear)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.EndYear)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.TipoParte.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.TipoVidrio.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Perforacion)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Ancho)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Alto)</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table mt-5" data-role="table" data-show-pagination="false" data-show-table-info="false" data-show-search="false" data-show-rows-steps="false" data-horizontal-scroll="true">
+            <thead>
+                <tr>
+
+                    <th>BOTÓN</th>
+                    <th>RED</th>
+                    <th>SERIGRAFÍA</th>
+                    <th>SENSOR LLUVIA</th>
+                    <th>MOLDURA</th>
+                    <th>HOLDER</th>
+                    <th>SENSOR CONDENSACIÓN</th>
+                    <th>COLOR</th>
+                    <th>HOMOLOGO</th>
+                    <th>CLASIFICACIÓN</th>
+                    <th>MERCADO</th>
+                    <th>PROCEDENCIA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center">
+                        @if (Model.Producto.Boton)
+                        {<span>SI</span> }
+                        else
+                        { <span>NO</span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.Red)
+                        {<span>SI</span> }
+                        else
+                        { <span>NO</span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.Serigrafia)
+                        {<span>SI</span> }
+                        else
+                        { <span>NO</span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.SensorLluvia)
+                        {<span>SI</span> }
+                        else
+                        { <span>NO</span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.Moldura)
+                        {<span>SI</span> }
+                        else
+                        { <span>NO</span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.Holder)
+                        {<span>SI</span> }
+                        else
+                        { <span>NO</span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.SensorCondensacion)
+                       {<span>SI</span> }
+                       else
+                       { <span>NO</span>}
+                    </td>
+                    <td>@Html.DisplayFor(x => x.Producto.Color.Nombre)</td>
+                    <td class="text-center">
+                        @if (Model.Producto.Homologo)
+                        {<span>SI</span> }
+                        else
+                        { <span>NO</span>}
+                    </td>
+                    <td>@Html.DisplayFor(x => x.Producto.TipoParte.Clasificacion.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Mercado.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Procedencia.Nombre)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="mt-4">
+            <a href="@Url.Action("Edit","Producto",new { id=Model.Producto.ProductoId})" class="button fg-white" style="background-color: #0057b8;"><i class="mif-pencil"></i></a>
+            <a href="@Url.Action("Delete","Producto",new { id=Model.Producto.ProductoId})" class="button fg-white" style="background-color: #0057b8;"><i class="mif-bin"></i></a>
+        </div>
+    </div>
+    <div class="cell-md-4">
+        <div id="light-gallery">
+            @foreach (var imagen in Model.ProductoImagen)
+            {
+                <a href="~/Resources/Uploads/@imagen.Imagen.Nombre" name="thumbsimages">
+                    <img src="~/Resources/Uploads/@imagen.Imagen.Nombre" class="img-fluid img-thumbnail" />
+                </a>
+            }
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script src="~/Scripts/lightgallery/js/lightgallery.min.js"></script>
+    <script src="~/Scripts/lightgallery/js/lightgallery-all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#light-gallery").lightGallery({
+                thumbnail: true,
+                share: false,
+                download: false
+            });
+            $("a[name='thumbsimages']").each(function (index, el) {
+                if (index >= 1) {
+                    $(el).hide();
+                }
+            });
+        });
+    </script>
+}
+

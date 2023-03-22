@@ -1,0 +1,277 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximun-scale=1.0, user-scalable=no">
+    <title>@ViewBag.Title - Vitro</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    @Styles.Render("~/Content/css")
+    @RenderSection("styles", required: false)
+</head>
+<body>
+    <header class="app-bar text-bold fg-white" data-role="appbar" data-expand-point="md" style="background-color:#005776;height: 100px;">
+        <a href="/" class="brand no-hover">
+            <img src="~/Resources/Images/vitro-logo-azul.png" width="150" height="50">
+        </a>
+        <ul class="app-bar-menu ml-auto text-upper collapsed">
+            <li>
+                <a href="#" class="dropdown-toggle">@Session["UserName"]</a>
+                <ul class="d-menu place-right" data-role="dropdown">
+                    <li><a href="@Url.Action("Account","Account")"><span class="mif-user"></span> mi perfil</a></li>
+                    @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutform" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <li><a href="javascript:document.getElementById('logoutform').submit();"><span class="mif-settings-power"></span> cerrar sesión</a></li>
+                    }
+                </ul>
+            </li>
+            <li>
+                <a href="#" style="cursor: default;">&nbsp;</a>
+            </li>
+        </ul>
+    </header>
+    <div data-role="navview" class="h-vh-100">
+        <div class="navview-pane">
+            <button class="pull-button"><span class="default-icon-menu"></span></button>
+            <ul class="navview-menu">
+                <li class="item-separator"></li>
+                <li class="item-separator"></li>
+                <li class="item-separator"></li>
+
+                <li class="item-separator"></li>
+                @if (User.IsInRole("Administrador"))
+                {
+                    <li>
+                        <a href="/" style="color: #005776;">
+                            <span class="icon"><span class="mif-home"></span></span>
+                            <span class="caption">INICIO</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-toggle" style="color: #005776;">
+                            <span class="icon"><span class="mif-tree"></span></span>
+                            <span class="caption">ADMINISTRACIÓN</span>
+                        </a>
+                        <ul class="navview-menu" data-role="dropdown">
+                            <li>
+                                <a href="@Url.Action("Index","Referencia",new { Page="Pais" })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">ATRIBUTOS DE PRODUCTOS</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index","Account",new { })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">USUARIOS</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index","Offline",new { })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">VITRO OFFLINE</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index","Configuracion",new { Page="Pais" })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">CONFIGURACIONES</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-toggle" style="color: #005776;">
+                            <span class="icon"><span class="mif-cogs"></span></span>
+                            <span class="caption">PROCESOS</span>
+                        </a>
+                        <ul class="navview-menu" data-role="dropdown">
+                            <li>
+                                <a href="@Url.Action("Index","Producto",new { })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">PRODUCTOS</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index","Promociones",new { })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">PROMOCIONES</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Upload","Producto",new { State="Upload" })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">CARGA DE PRODUCTOS</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index","Downloader",new { })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">DESCARGAR CATÁLOGO</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index","Mail",new { })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">CORREO ELECTRÓNICO</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                else if (User.IsInRole("Mercadotecnia"))
+                {
+                    <li>
+                        <a href="/" style="color: #005776;">
+                            <span class="icon"><span class="mif-home"></span></span>
+                            <span class="caption">INICIO</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-toggle" style="color: #005776;">
+                            <span class="icon"><span class="mif-tree"></span></span>
+                            <span class="caption">ADMINISTRACIÓN</span>
+                        </a>
+                        <ul class="navview-menu" data-role="dropdown">
+                            <li>
+                                <a href="@Url.Action("Index","Referencia",new { Page="Pais" })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">ATRIBUTOS DE PRODUCTOS</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index","Configuracion",new { Page="Pais" })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">CONFIGURACIONES</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-toggle" style="color: #005776;">
+                            <span class="icon"><span class="mif-cogs"></span></span>
+                            <span class="caption">PROCESOS</span>
+                        </a>
+                        <ul class="navview-menu" data-role="dropdown">
+                            <li>
+                                <a href="@Url.Action("Index","Producto",new { })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">PRODUCTOS</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index","Promociones",new { })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">PROMOCIONES</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Upload","Producto",new { State="Upload"})" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">CARGA DE PRODUCTOS</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index","Downloader",new { })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">DESCARGAR CATÁLOGO</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index","Mail",new { })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">CORREO ELECTRÓNICO</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                else if (User.IsInRole("Ingenieria"))
+                {
+                    <li>
+                        <a href="#" class="dropdown-toggle" style="color: #005776;">
+                            <span class="icon"><span class="mif-tree"></span></span>
+                            <span class="caption">ADMINISTRACIÓN</span>
+                        </a>
+                        <ul class="navview-menu" data-role="dropdown">
+                            <li>
+                                <a href="@Url.Action("Index","Referencia",new { Page="Pais" })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">ATRIBUTOS DE PRODUCTOS</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-toggle" style="color: #005776;">
+                            <span class="icon"><span class="mif-cogs"></span></span>
+                            <span class="caption">PROCESOS</span>
+                        </a>
+                        <ul class="navview-menu" data-role="dropdown">
+                            <li>
+                                <a href="@Url.Action("Upload","Producto",new { State="Upload" })" style="color: #005776;">
+                                    <span class="icon">
+                                        <span class="mif-chevron-right"></span>
+                                    </span>
+                                    <span class="caption">CARGA DE PRODUCTOS</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                <li>
+                    <a href="@Url.Action("Index","Search")" style="color: #005776;">
+                        <span class="icon"><span class="mif-search"></span></span>
+                        <span class="caption">BUSCAR</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="navview-content h-100 d-flex" id="content" style="overflow-y: scroll;">
+            <div class="container-fluid pb-5">
+                @RenderBody()
+            </div>
+            @*<div id="footer" style="background-color: #e5e5e5;">
+                    <div class="text-center" style="color: #005776;">&copy; @DateTime.Now.Year Vitro Colombia &reg; TODOS LOS DERECHOS RESERVADOS</div>
+                </div>*@
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/metro")
+    <script src="~/Scripts/app.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

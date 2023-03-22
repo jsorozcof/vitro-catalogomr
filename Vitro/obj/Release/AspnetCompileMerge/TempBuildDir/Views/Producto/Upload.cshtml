@@ -1,0 +1,89 @@
+﻿@model Vitro.Models.UploadViewModel
+
+@{
+    ViewBag.Title = "Carga de Productos";
+}
+
+<h2 class="h1 text-upper">@ViewBag.Title</h2>
+
+<div class="row">
+    <div class="cell-md-6">
+        @if (Request.Params["State"].Equals("Fails"))
+        {
+            <div class="panel fg-white p-5 text-upper bg-red">
+                <span>existen <strong>@TempData["ErrorImageUploadsCount"]</strong> imagenes que no pudieron ser procesadas de @TempData["ProccessRowsCount"] registros</span>
+                <div>
+                    <a href="@Url.Action("Upload","Producto",new { State="Upload"})" class="button fg-white mt-5" style="background: #0057b8;">VOLVER</a>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>SAP</th>
+                        <th>NAGS</th>
+                        <th>MARCA</th>
+                        <th>MODELO</th>
+                        <th>AÑO INICIAL</th>
+                        <th>AÑO FINAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var temp in Model.TempProductos)
+                    {
+                        <tr>
+                            <td>@temp.SAP</td>
+                            <td>@temp.NAGS</td>
+                            <td>@temp.MarcaId</td>
+                            <td>@temp.ModeloId</td>
+                            <td>@temp.StartYear</td>
+                            <td>@temp.EndYear</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            if (TempData["ProccessRowsCount"] != null)
+            {
+                <div class="panel fg-white p-5 text-upper" style="background-color: #005776;">
+                    <div>Se han procesado <strong>@TempData["ProccessRowsCount"]</strong> productos</div>
+                    <div><span class="mif-chevron-right icon"></span> Número de registros exitosos <strong>@TempData["ProccessSuccessCount"]</strong></div>
+                    <div><span class="mif-chevron-right icon"></span> Número de registros fallidos <strong>@TempData["ProccessFailsCount"]</strong></div>
+                    <div><span class="mif-chevron-right icon"></span> Número de imagenes procesadas con errores <strong>@TempData["ErrorImageUploadsCount"]</strong></div>
+                    <hr />
+                    @using (Html.BeginForm("ResultUpload", "Producto", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">DESCARGAR RESULTADOS</button>
+                        </div>
+                    }
+                </div>
+            }
+            <div class="my-5"></div>
+            using (Html.BeginForm("Upload", "Producto", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Recursos)
+                    @Html.TextBoxFor(x => x.Recursos)
+                    @Html.ValidationMessageFor(x => x.Recursos, null, new { @class = "fg-red" })
+                </div>
+                <div class="form-group">
+                    @Html.TextBoxFor(x => x.File, new { data_role = "file", @type = "file" })
+                    @Html.ValidationMessageFor(x => x.File, null, new { @class = "fg-red" })
+                </div>
+                <div class="form-group">
+                    @Html.CheckBoxFor(x => x.Actualizar, new { data_role = "checkbox", data_caption = "Actualizar Registros" })
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="button fg-white" style="background-color: #0057b8;">PROCESAR</button>
+                </div>
+            }
+        }
+    </div>
+</div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}

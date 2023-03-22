@@ -1,0 +1,31 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    Layout = null;
+    ViewBag.Title = "Bloqueado";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximun-scale=1.0, user-scalable=no">
+    <title>Inicio de sesión - Vitro</title>
+    @Styles.Render("~/Content/css")
+</head>
+<body class="h-vh-100" style="background: #edfbff">
+
+    <div class="login-form bg-white p-6 mx-auto border bd-default win-shadow">
+        <div>
+            <img src="~/Resources/Images/vitro-logo.png" class="img-fluid" />
+        </div>
+        <hr class="bg-cyan" />
+
+        <p class="fg-red h4 text-just">Su cuenta presenta problemas para iniciar sesión, contacte con los administradores del sitio para resolver este inconveniente.</p>
+        <hr />
+        <p>
+            @Html.ActionLink("INICIO DE SESIÓN", "Login", "Account", new { }, new { @class = "button success large" })
+        </p>
+    </div>
+</body>
+</html>

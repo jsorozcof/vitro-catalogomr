@@ -1,0 +1,233 @@
+﻿@model Vitro.Models.SearchViewModel
+@{
+    ViewBag.Title = "Búsquedas";
+}
+
+<h2 class="text-upper h1">@ViewBag.Title</h2>
+<div class="row" ng-app="app" ng-controller="searchController">
+    <div class="cell-12">
+        <ul data-role="tabs" data-expand="true">
+            <li><a href="#busquedaCodigo" class="text-upper text-light">por código</a></li>
+            <li><a href="#busqueda" class="text-upper text-light">por modelo</a></li>
+            <li><a href="#productnotfound" class="text-upper text-light" ng-click="modeForm()">no encontraste tu producto?</a></li>
+        </ul>
+        @if (TempData["Message"] != null)
+        {
+            <div class="content">
+                <div class="panel fg-white text-upper text-center p-5" style="background: #005776;">
+                    @TempData["Message"]
+                </div>
+            </div>
+        }
+    <div id="busquedaCodigo">
+        @using (Html.BeginForm("Retrieve", "Search", FormMethod.Post))
+        {
+            <div class="form-group">
+
+                <label>Buscar Por:</label>&emsp;
+                @Html.RadioButtonFor(x => x.Parametro, "SAP", new { data_role = "radio", data_style = "2", @checked = "", data_caption = "Código SAP" })
+                @Html.RadioButtonFor(x => x.Parametro, "NAGS", new { data_role = "radio", data_style = "2", data_caption = "Código NAGS" })
+            </div>
+            <div class="form-group">
+                <label>Párametros de Búsqueda:</label>
+                @Html.TextBoxFor(x => x.Busqueda, new { data_role = "taginput" })
+            </div>
+            <div class="form-group">
+                <button type="submit" class="button fg-white" style="background-color: #0057b8;">BUSCAR</button>
+            </div>
+            @Html.HiddenFor(x => x.Mode, new { Value = "SearchViewModel" })
+            @Html.AntiForgeryToken()
+        }
+    </div>
+        <div id="busqueda">
+            @using (Html.BeginForm("Retrieve", "Search", FormMethod.Post))
+            {
+                <input type="hidden" name="UrlSite" id="UrlSite" value="@HttpContext.Current.Request.ApplicationPath" />
+                <div class="row">
+                    <div class="cell-md-3">
+                        <label>Marca:</label>
+                        @Html.DropDownListFor(x => x.Marca, new SelectList(Model.Marcas, "MarcaId", "Nombre"), "Seleccione...", new { ng_change = "marcaChange()", ng_model = "marcaSelected" })
+                    </div>
+                    <div class="cell-md-3">
+                        <label>Modelo:</label>
+                        <select name="Modelo" id="Modelo">
+                            <option ng-repeat="modelo in modelos" value="{{modelo.ModeloId}}">{{modelo.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="cell-md-3">
+                        <label>Año:</label>
+                        @Html.TextBoxFor(x => x.Year, new { data_role = "input" })
+                    </div>
+                </div>
+                <div class="form-group mt-4">
+                    <button type="submit" class="button fg-white" style="background-color: #0057b8;">BUSCAR</button>
+                </div>
+                @Html.HiddenFor(x => x.Mode, new { Value = "SearchViewModel2" })
+                @Html.AntiForgeryToken()
+            }
+        </div>
+        <div id="productnotfound">
+            @if (TempData["Message"] != null)
+            {
+                <div class="content">
+                    <div class="panel fg-white text-upper text-center p-5" style="background: #005776;">
+                        @TempData["Message"]
+                    </div>
+                </div>
+            }
+            <div class="row mt-4">
+                <div class="cell-12">
+                    <div class="text-upper h3">ingresa los detalles del producto</div>
+                </div>
+                <div class="cell-md-6">
+                    @using (Html.BeginForm("Suggest", "Search", FormMethod.Post, new { }))
+                    {
+                        <div class="form-group">
+                            @Html.LabelFor(x => x.SugerenciaViewModel.Marca)
+                            @Html.TextBoxFor(x => x.SugerenciaViewModel.Marca)
+                            @Html.ValidationMessageFor(x => x.SugerenciaViewModel.Marca, null, new { @class = "fg-red" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(x => x.SugerenciaViewModel.Modelo)
+                            @Html.TextBoxFor(x => x.SugerenciaViewModel.Modelo)
+                            @Html.ValidationMessageFor(x => x.SugerenciaViewModel.Modelo, null, new { @class = "fg-red" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(x => x.SugerenciaViewModel.TipoParte)
+                            @Html.TextBoxFor(x => x.SugerenciaViewModel.TipoParte)
+                            @Html.ValidationMessageFor(x => x.SugerenciaViewModel.TipoParte, null, new { @class = "fg-red" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(x => x.SugerenciaViewModel.Descripcion)
+                            @Html.TextAreaFor(x => x.SugerenciaViewModel.Descripcion)
+                            @Html.ValidationMessageFor(x => x.SugerenciaViewModel.Descripcion, null, new { @class = "fg-red" })
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">ENVIAR</button>
+                        </div>
+                        @Html.HiddenFor(x => x.Mode, new { Value = "SearchViewModel2" })
+                        @Html.AntiForgeryToken()
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cell-12" ng-hide="notfound">
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th>IMAGÉN</th>
+                    <th>CÓDIGO SAP</th>
+                    <th>CÓDIGO NAGS</th>
+                    <th>MARCA</th>
+                    <th>MODELO</th>
+                    <th>CLASIFICACIÓN</th>
+                    <th>TIPO DE PARTE</th>
+                    <th>AÑO</th>
+                    <th data-cls-column="text-center">HOMOLOGO</th>
+                    <th>ANTENA</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Productos != null && Model.Productos.Count() > 0)
+                {
+                    foreach (var producto in Model.Productos)
+                    {
+                        <tr>
+                            <td><img src="~/Resources/Uploads/@Model.ProductoImagenes.Where(x=>x.ProductoId.Equals(producto.ProductoId)).OrderBy(x=>x.Imagen.Indice).FirstOrDefault().Imagen.Nombre" width="150" height="150" /></td>
+                            <td><a href="@Url.Action("Details","Search",new { id=producto.ProductoId })">@producto.SAP</a></td>
+                            <td><a href="@Url.Action("Details","Search",new { id=producto.ProductoId })">@producto.NAGS</a></td>
+                            <td>@producto.Modelo.Marca.Nombre</td>
+                            <td>@producto.Modelo.Nombre</td>
+                            <td>@producto.TipoParte.Clasificacion.Nombre</td>
+                            <td>@producto.TipoParte.Nombre</td>
+                            <td>@producto.StartYear - @producto.EndYear</td>
+                            <td>
+                                @if (producto.Homologo)
+                                {<span>SI</span> }
+                                else
+                                { <span>NO</span>}
+                            </td>
+                            <td>
+                                @if (producto.Antena)
+                                {
+                                    <span>SI</span>
+                                }
+                                else {
+                                    <span>NO</span>
+                                }
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        @if (Model.Homologos != null)
+        {
+            <div class="cell-12">
+                <h3 class="text-light text-muted text-upper">tambien puedes utilizar estos</h3>
+            </div>
+            foreach (var homologo in Model.Homologos)
+            {
+                <div class="cell-4">
+                    <div class="card">
+                        <div class="card-header">
+                            @homologo.Descripcion
+                        </div>
+                        <div class="card-content px-4">
+                            <table class="table striped compact">
+                                <tr>
+                                    <th>SAP</th>
+                                    <td>@homologo.SAP</td>
+                                </tr>
+                                <tr>
+                                    <th>NAGS</th>
+                                    <td>@homologo.NAGS</td>
+                                </tr>
+                                <tr>
+                                    <th>AÑO</th>
+                                    <td>@homologo.StartYear - @homologo.EndYear</td>
+                                </tr>
+                                <tr>
+                                    <th>MODELO</th>
+                                    <td>@homologo.Modelo.Nombre</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="card-footer">
+                            <a href="@Url.Action("Details", "Search", new { id = homologo.ProductoId })" class="button small">DETALLES</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/angular")
+    <script src="~/Scripts/busquedas.js"></script>
+    <script>
+        $(document).ready(function () {
+            var maxghtdescr = 0.00;
+            var maxghtpanel = 0.00;
+
+            $("div.card").each(function () {
+                if ($(this).height() > maxghtpanel) {
+                    maxghtpanel = $(this).height();
+                }
+            });
+
+            $("td[name='tddescr']").each(function () {
+                if ($(this).height() > maxghtdescr) {
+                    maxghtdescr = $(this).height();
+                }
+            });
+            $("td[name='tddescr']").height(maxghtdescr);
+            $("div.panel").height(maxghtpanel);
+        });
+    </script>
+}

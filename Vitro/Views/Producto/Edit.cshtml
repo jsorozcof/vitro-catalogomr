@@ -1,0 +1,177 @@
+﻿@model Vitro.Models.ProductoViewModel
+@{
+    ViewBag.Title = "Editar Producto";
+}
+
+<h2 class="text-upper h1">@ViewBag.Title</h2>
+<ul class="breadcrumbs">
+    <li class="page-item"><a href="@Url.Action("Index","Producto")" class="page-link"> Productos</a></li>
+    <li class="page-item"><a href="#" class="page-link">Editar Producto</a></li>
+</ul>
+<hr />
+<div class="row h-vh-100" ng-app="app" ng-controller="prodController">
+    <div class="cell-md-6">
+        @using (Html.BeginForm("Edit", "Producto", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.ProductoId)
+            @Html.Hidden("_PS", Model.Pais, new { id = "_PS" })
+            @Html.Hidden("_MC", Model.Marca, new { id = "_MC" })
+            @Html.Hidden("_MD", Model.Modelo, new { id = "_MD" })
+            @Html.Hidden("_CL", Model.Clasificacion, new { id = "_CL" })
+            @Html.Hidden("_TP", Model.TipoParte, new { id = "_TP" })
+
+            <div class="row">
+                <div class="cell-md-4">
+                    @Html.LabelFor(x => x.Pais)
+                    @Html.DropDownListFor(x => x.Pais, new SelectList(Model.PaisList, "PaisId", "Nombre"), "Seleccione...", new { ng_change = "changePais()", ng_model = "paisSelected" })
+                    @Html.ValidationMessageFor(x => x.Pais)
+                </div>
+                <div class="cell-md-4">
+                    @Html.LabelFor(x => x.SAP)
+                    @Html.TextBoxFor(x => x.SAP)
+                    @Html.ValidationMessageFor(x => x.SAP, null, new { @class = "fg-red" })
+                </div>
+                <div class="cell-md-4">
+                    @Html.LabelFor(x => x.NAGS)
+                    @Html.TextBoxFor(x => x.NAGS)
+                    @Html.ValidationMessageFor(x => x.NAGS, null, new { @class = "fg-red" })
+                </div>
+                <div class="cell-md-3">
+                    @Html.LabelFor(x => x.Marca)
+                    <select name="Marca" id="Marca" ng-change="changeMarcas()" ng-model="marcaSelected">
+                        <option ng-repeat="marca in marcas" value="{{marca.MarcaId}}">{{marca.Nombre}}</option>
+                    </select>
+                    @Html.ValidationMessageFor(x => x.Marca)
+                </div>
+                <div class="cell-md-3">
+                    @Html.LabelFor(x => x.Modelo)
+                    <select name="Modelo" id="Modelo" ng-model="modeloSelected">
+                        <option>Seleccione...</option>
+                        <option ng-repeat="modelo in modelos" value="{{modelo.ModeloId}}">{{modelo.Nombre}}</option>
+                    </select>
+                    @Html.ValidationMessageFor(x => x.Modelo)
+                </div>
+                <div class="cell-md-3">
+                    @Html.LabelFor(x => x.StartYear)
+                    @Html.TextBoxFor(x => x.StartYear)
+                    @Html.ValidationMessageFor(x => x.StartYear)
+                </div>
+                <div class="cell-md-3">
+                    @Html.LabelFor(x => x.EndYear)
+                    @Html.TextBoxFor(x => x.EndYear)
+                    @Html.ValidationMessageFor(x => x.EndYear)
+                </div>
+                <div class="cell-12">
+                    @Html.LabelFor(x => x.Descripcion)
+                    @Html.TextAreaFor(x => x.Descripcion)
+                </div>
+                <div class="cell-md-6">
+                    @Html.LabelFor(x => x.Clasificacion)
+                    @Html.DropDownListFor(x => x.Clasificacion, new SelectList(Model.Clasificaciones, "ClasificacionId", "Nombre"), "Seleccione...", new { ng_change = "changeClasificacion()", ng_model = "clasificacionSelected" })
+                    @Html.ValidationMessageFor(x => x.Clasificacion)
+                </div>
+                <div class="cell-md-6">
+                    @Html.LabelFor(x => x.TipoParte)
+                    <select id="TipoParte" name="TipoParte" ng-model="tparteSelected">
+                        <option>Seleccione...</option>
+                        <option ng-repeat="tparte in tpartes" value="{{tparte.TipoParteId}}">{{tparte.Nombre}}</option>
+                    </select>
+                    @Html.ValidationMessageFor(x => x.TipoParte)
+                </div>
+                <div class="cell-md-4">
+                    @Html.LabelFor(x => x.Perforacion)
+                    @Html.TextBoxFor(x => x.Perforacion)
+                    @Html.ValidationMessageFor(x => x.Perforacion)
+                </div>
+                <div class="cell-md-4">
+                    @Html.LabelFor(x => x.Ancho)
+                    @Html.TextBoxFor(x => x.Ancho)
+                    @Html.ValidationMessageFor(x => x.Ancho)
+                </div>
+                <div class="cell-md-4 mb-3">
+                    @Html.LabelFor(x => x.Alto)
+                    @Html.TextBoxFor(x => x.Alto)
+                    @Html.ValidationMessageFor(x => x.Alto)
+                </div>
+                <div class="cell-md-2">
+                    @Html.CheckBoxFor(x => x.Boton, new { data_role = "checkbox", data_caption = "Botón" })
+                </div>
+                <div class="cell-md-2">
+                    @Html.CheckBoxFor(x => x.Red, new { data_role = "checkbox", data_caption = "Red" })
+                </div>
+                <div class="cell-md-2">
+                    @Html.CheckBoxFor(x => x.Serigrafia, new { data_role = "checkbox", data_caption = "Serigrafía" })
+                </div>
+                <div class="cell-md-2">
+                    @Html.CheckBoxFor(x => x.SensorLluvia, new { data_role = "checkbox", data_caption = "Sensor de Lluvia" })
+                </div>
+                <div class="cell-md-2">
+                    @Html.CheckBoxFor(x => x.Moldura, new { data_role = "checkbox", data_caption = "Moldura" })
+                </div>
+                <div class="cell-md-2">
+                    @Html.CheckBoxFor(x => x.Holder, new { data_role = "checkbox", data_caption = "Holder" })
+                </div>
+                <div class="cell-md-2">
+                    @Html.CheckBoxFor(x => x.SensorCondensacion, new { data_role = "checkbox", data_caption = "Sensor de Condensación" })
+                </div>
+                <div class="cell-md-2">
+                    @Html.CheckBoxFor(x => x.Homologo, new { data_role = "checkbox", data_caption = "Homologo" })
+                </div>
+                <div class="cell-md-2">
+                    @Html.CheckBoxFor(x => x.Antena, new { data_role = "checkbox", data_caption = "Antena" })
+                </div>
+                <div class="cell-md-2">
+                    @Html.CheckBoxFor(x => x.SubEnsamble, new { data_role = "checkbox", data_caption = "Sub Ensamble" })
+                </div>
+                <div class="cell-md-4"></div>
+                <div class="cell-md-4">
+                    @Html.LabelFor(x => x.Color)
+                    @Html.DropDownListFor(x => x.Color, new SelectList(Model.ColorList, "ColorId", "Nombre"), "Seleccione...", new { data_role = "select" })
+                    @Html.ValidationMessageFor(x => x.Color)
+                </div>
+                <div class="cell-md-4">
+                    @Html.LabelFor(x => x.TipoVidrio)
+                    @Html.DropDownListFor(x => x.TipoVidrio, new SelectList(Model.TipoVidroList, "TipoVidrioId", "Nombre"), "Seleccione...", new { data_role = "select" })
+                    @Html.ValidationMessageFor(x => x.TipoVidrio)
+                </div>
+                <div class="cell-md-4">
+                    @Html.LabelFor(x => x.Mercado)
+                    @Html.DropDownListFor(x => x.Mercado, new SelectList(Model.MercadoList, "MercadoId", "Nombre"), "Seleccione...", new { data_role = "select" })
+                    @Html.ValidationMessageFor(x => x.Mercado)
+                </div>
+                <div class="cell-md-6">
+                    @Html.LabelFor(x => x.Procedencia)
+                    @Html.DropDownListFor(x => x.Procedencia, new SelectList(Model.ProcedenciaList, "ProcedenciaId", "Nombre"), "Seleccione...", new { data_role = "select" })
+                    @Html.ValidationMessageFor(x => x.Procedencia)
+                </div>
+                <div class="cell-6">
+                    <label>Archivo de Imagen @Html.DisplayFor(x => x.ProductoImagenes.FirstOrDefault().Imagen.Nombre)</label>
+                    <input type="file" accept="image/png, image/jpeg, image/jpg" name="Files" id="Files" data-role="file" onchange="@Html.DisplayFor(x => x.ProductoImagenes.FirstOrDefault().Imagen.Nombre)" data-button-title="Seleccione una imagen..." />
+                </div>
+                <div class="cell-12">
+                    @Html.CheckBoxFor(x => x.Activo, new { data_role = "checkbox", data_caption = "Activo" })
+                </div>
+                <div class="cell-12 mt-3">
+                    <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="cell-md-4">
+        <div data-role="carousel">
+            @foreach (var imagen in Model.ProductoImagenes)
+            {
+                <div class="slide">
+                    <img src="~/Resources/Uploads/@imagen.Imagen.Nombre" class="img-fluid" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/angular")
+    <script src="~/Scripts/productos.js"></script>
+}

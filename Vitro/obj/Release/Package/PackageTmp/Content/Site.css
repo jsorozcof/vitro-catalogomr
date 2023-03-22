@@ -1,0 +1,22 @@
+﻿#content {
+    padding-top: 115px;
+}
+
+.login-form {
+    width: 450px;
+    height: auto;
+    top: 50%;
+    margin-top: -250px;
+}
+
+body{
+    font-family: 'Lato', 'Segoe UI';
+}
+
+input[type=text].valid, input[type=password].valid, select.valid, textarea.valid {
+    border: 1px solid #0057b8 !important;
+}
+
+.bg-site {
+    background-color: #005776 !important;
+}

@@ -1,0 +1,78 @@
+﻿@model Vitro.Models.PromocionesViewModel
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2 class="text-upper h1">editar promocion de producto</h2>
+<div class="row">
+    <div class="cell-12">
+        <a href="@Url.Action("Details","Promociones")" class="button"><i class="mif-arrow-left"></i></a>
+    </div>
+</div>
+<div class="row">
+    <div class="cell-12 my-5">
+        <table class="table striped table-border cell-border">
+            <tr>
+                <th colspan="2">@Html.DisplayFor(x => x.Descripcion)</th>
+            </tr>
+            <tr>
+                <th>SAP</th>
+                <td>@Html.DisplayFor(x => x.SAP)</td>
+            </tr>
+            <tr>
+                <th>NAGS</th>
+                <td>@Html.DisplayFor(x => x.NAGS)</td>
+            </tr>
+        </table>
+    </div>
+    <div class="cell-12">
+        @using (Html.BeginForm("Edit", "Promociones", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.ProductoId)
+            @Html.HiddenFor(x => x.PromocionId)
+
+            <div class="row">
+                <div class="cell-6">
+                    <div class="form-group">
+                        <label>PRECIO</label>
+                        @Html.TextBoxFor(x => x.Precio)
+                        @Html.ValidationMessageFor(x => x.Precio, null, new { @class = "fg-red" })
+                    </div>
+                </div>
+                <div class="cell-6">
+                    <div class="form-group">
+                        <label>STOCK</label>
+                        @Html.TextBoxFor(x => x.Stock)
+                        @Html.ValidationMessageFor(x => x.Stock, null, new { @class = "fg-red" })
+                    </div>
+                </div>
+                <div class="cell-6">
+                    <div class="form-group">
+                        <label>FECHA INICIO</label>
+                        @Html.TextBoxFor(x => x.FechaInicio, "{0:dd/MM/yyyy}", new { data_role = "calendarpicker", data_input_format = "%d/%m/%y", data_calendar_wide_point = "md" })
+                        @Html.ValidationMessageFor(x => x.FechaInicio, null, new { @class = "fg-red" })
+                    </div>
+                </div>
+                <div class="cell-6">
+                    <div class="form-group">
+                        <label>FECHA FINAL</label>
+                        @Html.TextBoxFor(x => x.FechaFinal, "{0:dd/MM/yyyy}", new { data_role = "calendarpicker", data_input_format = "%d/%m/%y", data_calendar_wide_point = "md" })
+                        @Html.ValidationMessageFor(x => x.FechaFinal, null, new { @class = "fg-red" })
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="cell-12">
+                    <div class="form-group">
+                        <button type="submit" class="button primary">GUADAR</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

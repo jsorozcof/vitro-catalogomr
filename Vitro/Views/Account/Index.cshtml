@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Vitro.Models.UsuarioViewModel>
+@{
+    ViewBag.Title = "Usuarios";
+}
+
+<h2 class="text-upper h1">@ViewBag.Title</h2>
+<hr />
+<div class="grid h-vh-100">
+    <div class="row">
+        <div class="cell-12 mb-5">
+            <a href="@Url.Action("Register","Account")" class="button fg-white" style="background-color: #0057b8;"><span class="mif-plus"></span> NUEVO USUARIO</a>
+        </div>
+        <div class="cell-md-8 search-wrapper"></div>
+        <div class="cell-md-4 rows-wrapper"></div>
+        <div class="cell-12">
+            <table class="table subcompact" data-role="table" data-search-wrapper=".search-wrapper" data-rows-wrapper=".rows-wrapper" data-horizontal-scroll="true">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Código SAP</th>
+                        <th>Correo Electrónico</th>
+                        <th>ROL</th>
+                        <th data-cls-column="text-center" class="text-center">Habilitado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.Usuario.FullName</td>
+                            <td>@user.Usuario.UserName</td>
+                            <td>@user.Usuario.Email</td>
+                            <td>@user.RoleName</td>
+                            <td>@if (user.Usuario.Disable){<span class="mif-cross fg-red"></span> }else{ <span class="mif-checkmark fg-green"></span>}</td>
+                            <td>
+                                <a href="@Url.Action("Edit","Account",new { id=user.Usuario.Id})" class="button"><span class="mif-pencil"></span></a>
+                                @*<a href="@Url.Action("/")" class="button"><span class="mif-bin"></span></a>*@
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,51 @@
+﻿@model Vitro.Models.MailViewModel
+@{
+    ViewBag.Title = "CORREO ELECTRÓNICO";
+}
+<h2 class="text-upper text-light h1">correo electrónico</h2>
+
+<div class="row">
+    <div class="cell-12">
+        <div style="background-color: #005776" class="fg-white compact small py-2 px-1">
+            <h6 class="text-light text-upper px-5"><i class="mif-warning"></i> se enviara un correo electronico a todos los clientes registrados</h6>
+        </div>
+    </div>
+    <div class="cell-12">
+        @if (TempData["Message"] != null)
+        {
+            <div data-role="panel" class="@TempData["MessageType"]">
+                @TempData["Message"]
+            </div>
+        }
+    </div>
+    <div class="cell-12">
+        @using (Html.BeginForm("Send", "Mail", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label>ASUNTO</label>
+                @Html.TextBoxFor(x => x.Subject)
+                @Html.ValidationMessageFor(x => x.Subject, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                <label>COPIAR A</label>
+                @Html.TextBoxFor(x => x.Bcc, new { data_role = "taginput" })
+            </div>
+            <div class="form-group">
+                <label>ADJUNTOS</label>
+                <input type="file" name="Files" id="Files" data-role="file" multiple />
+            </div>
+            <div class="form-group">
+                <label>MENSAJE</label>
+                @Html.TextAreaFor(x => x.Message)
+                @Html.ValidationMessageFor(x => x.Message, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                <button type="submit" class="button fg-white" style="background-color: #0057b8;">ENVIAR CORREO ELECTRONICO</button>
+            </div>
+        }
+    </div>
+</div>
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

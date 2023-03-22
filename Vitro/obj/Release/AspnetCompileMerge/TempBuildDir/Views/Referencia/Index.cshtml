@@ -1,0 +1,568 @@
+﻿@model Vitro.Models.AtributoViewModel
+
+@{
+    /**/
+
+    ViewBag.Title = "Atributos de Producto";
+}
+
+<h2 class="text-upper h1">@ViewBag.Title</h2>
+<hr class="bg-gray" />
+<div class="grid h-vh-100">
+    <div class="row">
+        <div class="cell-md-2">
+            <ul class="sidenav-counter sidenav-counter-expand-md">
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Pais"})" style="color: #005776;">
+                        <span class="mif-location icon"></span>
+                        <span class="title">PAISES</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Marca"})" style="color: #005776;">
+                        <span class="mif-registered icon"></span>
+                        <span class="title">MARCAS</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Modelo"})" style="color: #005776;">
+                        <span class="mif-apps icon"></span>
+                        <span class="title">MODELOS</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Clasificacion"})" style="color: #005776;">
+                        <span class="mif-dashboard icon"></span>
+                        <span class="title">CLASIFICACIONES</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="TPartes"})" style="color: #005776;">
+                        <span class="mif-layers icon"></span>
+                        <span class="title">TIPOS DE PARTES</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="TVidrios"})" style="color: #005776;">
+                        <span class="mif-checkmark icon"></span>
+                        <span class="title">TIPOS DE VIDRIO</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Color"})" style="color: #005776;">
+                        <span class="mif-paint icon"></span>
+                        <span class="title">COLORES</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Mercado"})" style="color: #005776;">
+                        <span class="mif-earth icon"></span>
+                        <span class="title">MERCADOS</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Procedencia"})" style="color: #005776;">
+                        <span class="mif-map icon"></span>
+                        <span class="title">PROCEDENCIAS</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="cell-md-10">
+            @switch (Request.Params["Page"])
+            {
+                case "Pais":
+                    <h3 class="text-light">PAISES</h3>
+                    using (Html.BeginForm("Manage", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Pais" })
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Nombre de País:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    <hr />
+                    <div class="row mt-6">
+                        <div class="cell-md-8 search-wrapper"></div>
+                        <div class="cell-md-4 rows-wrapper"></div>
+                        <div class="cell-12 mt-5">
+                            <table class="table" data-role="table" data-rows-wrapper=".rows-wrapper" data-search-wrapper=".search-wrapper" data-rows-steps="3,5,10" data-rows="5" data-table-info-title="Mostrando $1 al $2 de $3 registros.">
+                                <thead>
+                                    <tr>
+                                        <th>NOMBRE DE PAIS</th>
+                                        <th>ACTIVO/INACTIVO</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var pais in Model.Paises)
+                                    {
+                                        <tr>
+                                            <td>@pais.Nombre</td>
+                                            <td>
+                                                @if (pais.Activo)
+                                                {<span class="mif-checkmark fg-green"></span> }
+                                                else
+                                                { <span class="mif-cross fg-red"></span>}
+                                        </td>
+                                        <td><a href="@Url.Action("Edit","Referencia",new { Page="Pais",Id=pais.PaisId })" class="button"><span class="mif-pencil"></span></a></td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    break;
+                case "Marca":
+                    <h3 class="text-light">MARCAS</h3>
+                    using (Html.BeginForm("Manage", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Marca" })
+                        <div class="row">
+                            <div class="cell-6">
+                                <label>País:</label>
+                                @Html.DropDownListFor(x => x.Referencia, new SelectList(Model.Paises, "PaisId", "Nombre"), "Seleccione ...", new { data_role = "select" })
+                            </div>
+                            <div class="cell-md-6">
+                                <label>Nombre de Marca:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    <hr />
+                    <div class="row mt-6">
+                        <div class="cell-md-8 search-wrapper"></div>
+                        <div class="cell-md-4 rows-wrapper"></div>
+                        <div class="cell-12 mt-5">
+                            <table class="table" data-role="table" data-rows-wrapper=".rows-wrapper" data-search-wrapper=".search-wrapper" data-rows-steps="3,5,10,20" data-rows="5" data-table-info-title="Mostrando $1 al $2 de $3 registros.">
+                                <thead>
+                                    <tr>
+                                        <th>PAIS</th>
+                                        <th>NOMBRE DE MARCA</th>
+                                        <th>ACTIVO/INACTIVO</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var marca in Model.Marcas)
+                                    {
+                                        <tr>
+                                            <td>@marca.Pais.Nombre</td>
+                                            <td>@marca.Nombre</td>
+                                            <td>
+                                                @if (marca.Activo)
+                                                {<span class="mif-checkmark fg-green"></span> }
+                                                else
+                                                { <span class="mif-cross fg-red"></span>}
+                                            </td>
+                                            <td><a href="@Url.Action("Edit","Referencia",new { Page="Marca",Id=marca.MarcaId })" class="button"><span class="mif-pencil"></span></a></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    break;
+                case "Modelo":
+                    <h3 class="text-light">MODELOS</h3>
+                    using (Html.BeginForm("Manage", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Modelo" })
+                        <div class="row">
+                            <div class="cell-4">
+                                <label>País:</label>
+                                @Html.DropDownList("PaisSelect", new SelectList(Model.Paises, "PaisId", "Nombre", null), "Selecione..", new { data_role = "none" })
+                            </div>
+                            <div class="cell-4">
+                                <label>Marca:</label>
+                                <select name="Referencia" id="Referencia"></select>
+                            </div>
+                            <div class="cell-md-4">
+                                <label>Nombre de Modelo:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    <hr />
+                    <div class="row mt-6">
+                        <div class="cell-md-8 search-wrapper"></div>
+                        <div class="cell-md-4 rows-wrapper"></div>
+                        <div class="cell-12 mt-5">
+                            <table class="table" data-role="table" data-rows-wrapper=".rows-wrapper" data-search-wrapper=".search-wrapper" data-rows-steps="3,5,10" data-rows="5" data-table-info-title="Mostrando $1 al $2 de $3 registros.">
+                                <thead>
+                                    <tr>
+                                        <th>PAIS</th>
+                                        <th>NOMBRE DE MARCA</th>
+                                        <th>MODELO</th>
+                                        <th>ACTIVO/INACTIVO</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var modelo in Model.Modelos)
+                                    {
+                                        <tr>
+                                            <td>@modelo.Marca.Pais.Nombre</td>
+                                            <td>@modelo.Marca.Nombre</td>
+                                            <td>@modelo.Nombre</td>
+                                            <td>
+                                                @if (modelo.Activo)
+                                                {<span class="mif-checkmark fg-green"></span> }
+                                                else
+                                                { <span class="mif-cross fg-red"></span>}
+                                            </td>
+                                            <td><a href="@Url.Action("Edit","Referencia",new { Page="Modelo",Id = modelo.ModeloId })" class="button"><span class="mif-pencil"></span></a></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    break;
+                case "Clasificacion":
+                    <h3 class="text-light">CLASIFICACIONES</h3>
+                    using (Html.BeginForm("Manage", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Clasificacion" })
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Nombre de Clasificación:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    <hr />
+                    <div class="row mt-6">
+                        <div class="cell-md-8 search-wrapper"></div>
+                        <div class="cell-md-4 rows-wrapper"></div>
+                        <div class="cell-12 mt-5">
+                            <table class="table" data-role="table" data-rows-wrapper=".rows-wrapper" data-search-wrapper=".search-wrapper" data-rows-steps="3,5,10" data-rows="5" data-table-info-title="Mostrando $1 al $2 de $3 registros.">
+                                <thead>
+                                    <tr>
+                                        <th>NOMBRE DE CLASIFICACIÓN</th>
+                                        <th>ACTIVO/INACTIVO</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var clasificacion in Model.Clasificaciones)
+                                    {
+                                    <tr>
+                                        <td>@clasificacion.Nombre</td>
+                                        <td>
+                                            @if (clasificacion.Activo)
+                                            {<span class="mif-checkmark fg-green"></span> }
+                                            else
+                                            { <span class="mif-cross fg-red"></span>}
+                                        </td>
+                                        <td><a href="@Url.Action("Edit","Referencia",new { Page="Clasificacion",Id = clasificacion.ClasificacionId })" class="button"><span class="mif-pencil"></span></a></td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    break;
+                case "TPartes":
+                    <h3 class="text-light">TIPO DE PARTES</h3>
+                    using (Html.BeginForm("Manage", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "TPartes" })
+                        <div class="row">
+                            <div class="cell-6">
+                                <label>Clasificación:</label>
+                                @Html.DropDownListFor(x => x.Referencia, new SelectList(Model.Clasificaciones, "ClasificacionId", "Nombre"), "Seleccione ...", new { data_role = "select" })
+                            </div>
+                            <div class="cell-md-6">
+                                <label>Nombre Tipo de Parte:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    <hr />
+                    <div class="row mt-6">
+                        <div class="cell-md-8 search-wrapper"></div>
+                        <div class="cell-md-4 rows-wrapper"></div>
+                        <div class="cell-12 mt-5">
+                            <table class="table" data-role="table" data-rows-wrapper=".rows-wrapper" data-search-wrapper=".search-wrapper" data-rows-steps="3,5,10" data-rows="5" data-table-info-title="Mostrando $1 al $2 de $3 registros.">
+                                <thead>
+                                    <tr>
+                                        <th>NOMBRE DE CLASIFICACIÓN</th>
+                                        <th>TIPO DE PARTE</th>
+                                        <th>ACTIVO/INACTIVO</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var tparte in Model.TipoPartes)
+                                    {
+                                    <tr>
+                                        <td>@tparte.Clasificacion.Nombre</td>
+                                        <td>@tparte.Nombre</td>
+                                        <td>
+                                            @if (tparte.Activo)
+                                            {<span class="mif-checkmark fg-green"></span> }
+                                            else
+                                            { <span class="mif-cross fg-red"></span>}
+                                        </td>
+                                        <td><a href="@Url.Action("Edit","Referencia",new { Page="TPartes",Id = tparte.TipoParteId })" class="button"><span class="mif-pencil"></span></a></td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    break;
+                case "TVidrios":
+                    <h3 class="text-light">TIPO DE VIDRIOS</h3>
+                    using (Html.BeginForm("Manage", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "TVidrios" })
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Nombre Tipo de Vidrio:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    <hr />
+                    <div class="row mt-6">
+                        <div class="cell-md-8 search-wrapper"></div>
+                        <div class="cell-md-4 rows-wrapper"></div>
+                        <div class="cell-12 mt-5">
+                            <table class="table" data-role="table" data-rows-wrapper=".rows-wrapper" data-search-wrapper=".search-wrapper" data-rows-steps="3,5,10" data-rows="5" data-table-info-title="Mostrando $1 al $2 de $3 registros.">
+                                <thead>
+                                    <tr>
+                                        <th>NOMBRE TIPO DE VIDRIO</th>
+                                        <th>ACTIVO/INACTIVO</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var tvidrio in Model.TipoVidrios)
+                                    {
+                                    <tr>
+                                        <td>@tvidrio.Nombre</td>
+                                        <td>
+                                            @if (tvidrio.Activo)
+                                            {<span class="mif-checkmark fg-green"></span> }
+                                            else
+                                            { <span class="mif-cross fg-red"></span>}
+                                        </td>
+                                        <td><a href="@Url.Action("Edit","Referencia",new { Page="TVidrios",Id = tvidrio.TipoVidrioId })" class="button"><span class="mif-pencil"></span></a></td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    break;
+                case "Color":
+                    <h3 class="text-light">COLORES</h3>
+                    using (Html.BeginForm("Manage", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Color" })
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Código de Color:</label>
+                                @Html.TextBoxFor(x => x.Referencia)
+                            </div>
+                            <div class="cell-md-6">
+                                <label>Nombre de Color:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    <hr />
+                    <div class="row mt-6">
+                        <div class="cell-md-8 search-wrapper"></div>
+                        <div class="cell-md-4 rows-wrapper"></div>
+                        <div class="cell-12 mt-5">
+                            <table class="table" data-role="table" data-rows-wrapper=".rows-wrapper" data-search-wrapper=".search-wrapper" data-rows-steps="3,5,10" data-rows="5" data-table-info-title="Mostrando $1 al $2 de $3 registros.">
+                                <thead>
+                                    <tr>
+                                        <th>CÓDIGO DE COLOR</th>
+                                        <th>NOMBRE COLOR</th>
+                                        <th>ACTIVO/INACTIVO</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var color in Model.Colores)
+                                    {
+                                    <tr>
+                                        <td>@color.Codigo</td>
+                                        <td>@color.Nombre</td>
+                                        <td>
+                                            @if (color.Activo)
+                                            {<span class="mif-checkmark fg-green"></span> }
+                                            else
+                                            { <span class="mif-cross fg-red"></span>}
+                                        </td>
+                                        <td><a href="@Url.Action("Edit","Referencia",new { Page="Color",Id = color.ColorId })" class="button"><span class="mif-pencil"></span></a></td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    break;
+                case "Mercado":
+                    <h3 class="text-light">MERCADOS</h3>
+                    using (Html.BeginForm("Manage", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Mercado" })
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Nombre de Mercado:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    <hr />
+                    <div class="row mt-6">
+                        <div class="cell-md-8 search-wrapper"></div>
+                        <div class="cell-md-4 rows-wrapper"></div>
+                        <div class="cell-12 mt-5">
+                            <table class="table" data-role="table" data-rows-wrapper=".rows-wrapper" data-search-wrapper=".search-wrapper" data-rows-steps="3,5,10" data-rows="5" data-table-info-title="Mostrando $1 al $2 de $3 registros.">
+                                <thead>
+                                    <tr>
+                                        <th>NOMBRE MERCADO</th>
+                                        <th>ACTIVO/INACTIVO</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var mercado in Model.Mercados)
+                                    {
+                                    <tr>
+                                        <td>@mercado.Nombre</td>
+                                        <td>
+                                            @if (mercado.Activo)
+                                            {<span class="mif-checkmark fg-green"></span> }
+                                            else
+                                            { <span class="mif-cross fg-red"></span>}
+                                        </td>
+                                        <td><a href="@Url.Action("Edit","Referencia",new { Page="Mercado",Id = mercado.MercadoId })" class="button"><span class="mif-pencil"></span></a></td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    break;
+                case "Procedencia":
+                    <h3 class="text-light">PROCEDENCIAS</h3>
+                    using (Html.BeginForm("Manage", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Procedencia" })
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Procedencia:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    <hr />
+                    <div class="row mt-6">
+                        <div class="cell-md-8 search-wrapper"></div>
+                        <div class="cell-md-4 rows-wrapper"></div>
+                        <div class="cell-12 mt-5">
+                            <table class="table" data-role="table" data-rows-wrapper=".rows-wrapper" data-search-wrapper=".search-wrapper" data-rows-steps="3,5,10" data-rows="5" data-table-info-title="Mostrando $1 al $2 de $3 registros.">
+                                <thead>
+                                    <tr>
+                                        <th>NOMBRE PROCEDENCIA</th>
+                                        <th>ACTIVO/INACTIVO</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var procedencia in Model.Procedencias)
+                                    {
+                                    <tr>
+                                        <td>@procedencia.Nombre</td>
+                                        <td>
+                                            @if (procedencia.Activo)
+                                            {<span class="mif-checkmark fg-green"></span> }
+                                            else
+                                            { <span class="mif-cross fg-red"></span>}
+                                        </td>
+                                        <td><a href="@Url.Action("Edit","Referencia",new { Page="Procedencia",Id = procedencia.ProcedenciaId })" class="button"><span class="mif-pencil"></span></a></td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    break;
+            }
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @Scripts.Render("~/bundles/angular")
+    <script src="~/Scripts/attrjs.js"></script>
+}

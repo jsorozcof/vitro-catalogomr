@@ -1,0 +1,47 @@
+﻿@model Vitro.Models.MailConfigViewModel
+@{
+    ViewBag.Title = "Mail";
+}
+
+<h1 class="h1 text-light text-upper">configuracion de correo electronico</h1>
+
+<div class="row">
+    <div class="cell-12">
+        <a href="@Url.Action("Index","Configuracion")" class="button"><i class="mif-arrow-left"></i></a>
+    </div>
+    <div class="cell-6">
+        @using (Html.BeginForm("Mail", "Configuracion", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label>HOST</label>
+                @Html.TextBoxFor(x => x.Host, new { @placeholder = "smtp.office365.com" })
+                @Html.ValidationMessageFor(x => x.Host, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                <label>PUERTO</label>
+                @Html.TextBoxFor(x => x.Puerto, new { @placeholder = "25" })
+                @Html.ValidationMessageFor(x => x.Puerto, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                <label>CORREO ELECTRONICO</label>
+                @Html.TextBoxFor(x => x.MailAccount, new { @placeholder = "" })
+                @Html.ValidationMessageFor(x => x.MailAccount, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                <label>CONTRASEÑA</label>
+                @Html.PasswordFor(x => x.MailPassword, new { @placeholder = "" })
+                @Html.ValidationMessageFor(x => x.MailPassword, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.CheckBoxFor(x => x.HabilitarSSL, new { data_role = "checkbox", data_caption = "HABILITAR SSL" })
+            </div>
+            <div class="form-group">
+                <button type="submit" class="button primary">GUARDAR</button>
+            </div>
+        }
+    </div>
+</div>
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}

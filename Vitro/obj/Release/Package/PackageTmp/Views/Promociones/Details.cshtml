@@ -1,0 +1,62 @@
+﻿@model IEnumerable<VitroSql.ProductoPromocion>
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2 class="text-upper h1">promociones</h2>
+<div class="row mb-5">
+    <div class="cell-12">
+        <a href="@Url.Action("Index","Promociones")" class="button"><i class="mif-arrow-left"></i></a>
+    </div>
+</div>
+<div class="row">
+    <div class="cell-md-8 search-wrapper"></div>
+    <div class="cell-md-4 rows-wrapper"></div>
+    <div class="cell-12">
+        <table class="table striped" data-role="table" data-search-wrapper=".search-wrapper" data-rows-wrapper=".rows-wrapper" data-horizontal-scroll="true">
+            <thead>
+                <tr>
+                    <th>SAP</th>
+                    <th>NAGS</th>
+                    <th>DESCRIPCION</th>
+                    <th>PRECIO</th>
+                    <th>STOCK</th>
+                    <th>FECHA INICIO</th>
+                    <th>FECHA FINAL</th>
+                    <th>DIAS VIGENCIA</th>
+                    <th>ESTATUS</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var promocion in Model)
+                {
+                    <tr>
+                        <td>@promocion.Producto.SAP</td>
+                        <td>@promocion.Producto.NAGS</td>
+                        <td>@promocion.Producto.Descripcion</td>
+                        <td>@promocion.Precio</td>
+                        <td>@promocion.Stock</td>
+                        <td>@promocion.FechaInicio.ToString("dd/MM/yyyy")</td>
+                        <td>@promocion.FechaFinal.ToString("dd/MM/yyyy")</td>
+                        <td>@promocion.DiasVigencia</td>
+                        <td>
+                            @if (promocion.FechaFinal > DateTime.Today)
+                            {
+                                <button class="button success small w-100">VIGENTE</button>
+                            }
+                            else
+                            {
+                                <button class="button alert small w-100">CADUCADO</button>
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit","Promociones",new { id=promocion.PromocionId })" class="button success small"><i class="mif-pencil"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

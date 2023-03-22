@@ -1,0 +1,29 @@
+﻿@model Vitro.Models.DownloadViewModel
+
+@{
+    ViewBag.Title = "Descarga de Catálogo";
+}
+
+<h2 class="text-upper h1">@ViewBag.Title</h2>
+<div class="row">
+    <div class="cell-6">
+        @using (Html.BeginForm("FullCatalog", "Downloader", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label>MERCADO</label>
+                @Html.DropDownListFor(x => x.Mercado, new SelectList(Model.Mercados, "MercadoId", "Nombre"), new { data_role = "select" })
+            </div>
+            <div class="form-group">
+                <button type="submit" class="button fg-white" style="background-color: #0057b8;">INICIAR DESCARGA</button>
+            </div>
+        }
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+        });
+    </script>
+}

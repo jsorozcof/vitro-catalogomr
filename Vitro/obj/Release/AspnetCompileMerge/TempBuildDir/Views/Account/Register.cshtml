@@ -1,0 +1,60 @@
+﻿@model Vitro.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Crear Usuario";
+}
+
+<h2 class="text-upper h1">@ViewBag.Title.</h2>
+<hr />
+<div class="row">
+    <div class="cell-lg-6">
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                @Html.LabelFor(x => x.Pais)
+                @Html.DropDownListFor(x => x.Pais, new SelectList(ViewBag.Paises, "PaisId", "Nombre"), "Seleccione...", new { })
+                @Html.ValidationMessageFor(x => x.Pais, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.Nombre)
+                @Html.TextBoxFor(x => x.Nombre, new { data_type = "input" })
+                @Html.ValidationMessageFor(x => x.Nombre, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                <label>Código SAP</label>
+                @Html.TextBoxFor(x => x.UserName)
+                @Html.ValidationMessageFor(x => x.UserName, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email, new { })
+                @Html.TextBoxFor(m => m.Email, new { })
+                @Html.ValidationMessageFor(x => x.Email, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.Rol)
+                @Html.DropDownListFor(x => x.Rol, new SelectList(ViewBag.Roles, "Id", "Name"), new { data_role = "select" })
+                @Html.ValidationMessageFor(x => x.Rol, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password, new { })
+                @Html.PasswordFor(m => m.Password, new { })
+                @Html.ValidationMessageFor(x => x.Password, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.ConfirmPassword, new { })
+                @Html.PasswordFor(m => m.ConfirmPassword, new { })
+                @Html.ValidationMessageFor(x => x.ConfirmPassword, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.CheckBoxFor(x => x.Bloqueado, new { data_role = "checkbox", data_caption = "Cuenta Bloqueada" })
+            </div>
+            <div class="form-group">
+                <button type="submit" class="button fg-white" style="background-color:#0057b8;">GUARDAR</button>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

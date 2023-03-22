@@ -1,0 +1,219 @@
+﻿@model Vitro.Models.DetailsProductoViewModel
+@{
+    ViewBag.Title = "Detalles de Producto";
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/Scripts/lightgallery/css/lightgallery.min.css" />
+    <link rel="stylesheet" href="~/Scripts/lightgallery/css/lg-transitions.min.css" />
+    <link rel="stylesheet" href="~/Scripts/lightgallery/css/lg-fb-comment-box.min.css" />
+}
+<h2 class="text-upper h1">@ViewBag.Title</h2>
+<hr />
+<div class="row h-100 h-auto">
+    <div class="cell-12 mb-10">
+        <div class="clear">
+            <a href="@Url.Action("Index","Search")" class="button fg-white" style="background-color: #0057b8;"><span class="mif-search"></span> NUEVA BUSQUEDA</a>
+
+            <div class="float-right">
+                @using (Html.BeginForm("Create", "Downloader", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("_SRC", Model.Producto.ProductoId)
+                    <div class="form-group">
+                        <button type="submit" class="button fg-white" style="background-color: #0057b8;"><span class="mif-file-pdf fg-white"></span> IMPRIMIR BÚSQUEDA</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="cell-md-8">
+        <table class="table" data-role="table" data-show-pagination="false" data-show-table-info="false" data-show-search="false" data-show-rows-steps="false" data-horizontal-scroll="true">
+            <thead>
+                <tr>
+                    <th>CÓDIGO SAP</th>
+                    <th>CÓDIGO NAGS</th>
+                    <th>MARCA</th>
+                    <th>MODELO</th>
+                    <th>AÑO INICIAL</th>
+                    <th>AÑO FINAL</th>
+                    <th>TIPO DE PARTE</th>
+                    <th>TIPO DE VIDRIO</th>
+                    <th>PERFORACIÓN</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Html.DisplayFor(x => x.Producto.SAP)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.NAGS)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Modelo.Marca.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Modelo.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.StartYear)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.EndYear)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.TipoParte.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.TipoVidrio.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Perforacion)</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table mt-5" data-role="table" data-show-pagination="false" data-show-table-info="false" data-show-search="false" data-show-rows-steps="false" data-horizontal-scroll="true">
+            <thead>
+                <tr>
+                    <th>ANCHO</th>
+                    <th>ALTO</th>
+                    <th>BOTÓN</th>
+                    <th>RED</th>
+                    <th>SERIGRAFÍA</th>
+                    <th>COLOR</th>
+                    <th>HOMOLOGO</th>
+                    <th>ANTENA</th>
+                    <th>SUBENSAMBLE</th>
+                    <th>CLASIFICACIÓN</th>
+                    <th>MERCADO</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="text-center">
+                    <td>@Html.DisplayFor(x => x.Producto.Ancho)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Alto)</td>
+                    <td class="text-center">
+                        @if (Model.Producto.Boton)
+                        {<div>SI</div> }
+                        else
+                        { <div>NO</div>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.Red)
+                        {<div>SI</div> }
+                        else
+                        { <span>NO</span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.Serigrafia)
+                        {<span>SI</span> }
+                        else
+                        { <span>NO</span>}
+                    </td>
+                    <td>@Html.DisplayFor(x => x.Producto.Color.Nombre)</td>
+                    <td class="text-center">
+                        @if (Model.Producto.Homologo)
+                        {
+                            <span>SI</span>
+                        }
+                        else
+                        {
+                            <span>NO</span>
+                        }
+                    </td>
+                    <td>
+                        @if (Model.Producto.Antena)
+                        {<span>SI</span>}
+                        else
+                        { <span>NO</span>}
+                    </td>
+                    <td>
+                        @if (Model.Producto.SubEnsamble)
+                        {<span>SI</span>}
+                        else
+                        { <span>NO</span>}
+                    </td>
+                    <td>@Html.DisplayFor(x => x.Producto.TipoParte.Clasificacion.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Mercado.Nombre)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="cell-md-4">
+        <div id="light-gallery">
+            @foreach (var imagen in Model.MassiveProductImage)
+            {
+                if (imagen != null)
+                {
+                    string imagB64 = Convert.ToBase64String(imagen.Contenido);
+                    string imageData = string.Format("data:image/jpg;base64, {0}", imagB64);
+
+                    string ImageString = imageData;
+                    <a href='@string.Format("data:image/jpg;base64, {0}", imagB64)' name="thumbsimages">
+                        <img src="@ImageString" class="img-fluid img-thumbnail" />
+                    </a>
+                }
+            }
+
+            @*
+        @foreach (var imagen in Model.ProductoImagen.OrderBy(x => x.Imagen.Indice))
+        {
+            <a href="~/Resources/Uploads/@imagen.Imagen.Nombre" name="thumbsimages">
+                <img src="~/Resources/Uploads/@imagen.Imagen.Nombre" class="img-fluid img-thumbnail" />
+            </a>
+        }
+            *@
+        </div>
+        @*<div data-role="carousel">
+                @foreach (var imagen in Model.ProductoImagen)
+                {
+                    <div class="slide">
+                        <div data-role="imagemagnifier" data-magnifier-mode="glass" data-lens-type="circle" data-magnifier-zoom="3">
+                            <img src="~/Resources/Uploads/@imagen.Imagen.Nombre" class="img-fluid" />
+                        </div>
+                    </div>
+                }
+            </div>*@
+    </div>
+</div>
+<div class="row">
+    <div class="cell-12">
+        <h2 class="text-light text-upper text-muted">tambien puedes utilizar estos</h2>
+    </div>
+
+    @foreach (var homologo in Model.Homologos)
+    {
+        <div class="cell-4">
+            <div class="card">
+                <div class="card-header">
+                    @homologo.Descripcion
+                </div>
+                <div class="card-content px-4">
+                    <table class="table striped compact">
+                        <tr>
+                            <th>SAP</th>
+                            <td>@homologo.SAP</td>
+                        </tr>
+                        <tr>
+                            <th>NAGS</th>
+                            <td>@homologo.NAGS</td>
+                        </tr>
+                        <tr>
+                            <th>AÑO</th>
+                            <td>@homologo.StartYear - @homologo.EndYear</td>
+                        </tr>
+                        <tr>
+                            <th>MODELO</th>
+                            <td>@homologo.Modelo.Nombre</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <a href="@Url.Action("Details","Search",new { id=homologo.ProductoId })" class="button small">DETALLES</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@section scripts{
+    <script src="~/Scripts/lightgallery/js/lightgallery.min.js"></script>
+    <script src="~/Scripts/lightgallery/js/lightgallery-all.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#light-gallery").lightGallery({
+                thumbnail: true,
+                share: false,
+                download: false
+            });
+            $("a[name='thumbsimages']").each(function (index, el) {
+                if (index >= 1) {
+                    $(el).hide();
+                }
+            });
+        });
+    </script>
+}

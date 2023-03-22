@@ -1,0 +1,145 @@
+﻿@model Vitro.Models.DetailsProductoViewModel
+
+@{
+    ViewBag.Title = "Eliminar Producto";
+}
+
+<h2 class="text-upper h1">@ViewBag.Title</h2>
+<ul class="breadcrumbs">
+    <li class="page-item"><a href="@Url.Action("Index","Producto")" class="page-link"> Productos</a></li>
+    <li class="page-item"><a href="#" class="page-link">Eliminar Producto</a></li>
+</ul>
+<div class="row h-vh-100">
+    <div class="cell-md-8">
+        <div data-role="panel" class="bg-red fg-white text-center">
+            <h2 class="text-light">¿Esta seguro de eliminar el registro?</h2>
+            <span>Esta acción eliminrá el registro de forma permanente y no podra ser recuperado.</span>
+        </div>
+        <table class="table" data-horizontal-scroll="true">
+            <thead>
+                <tr>
+                    <th>CÓDIGO SAP</th>
+                    <th>CÓDIGO NAGS</th>
+                    <th>MARCA</th>
+                    <th>MODELO</th>
+                    <th>AÑO INICIAL</th>
+                    <th>AÑO FINAL</th>
+                    <th>TIPO DE PARTE</th>
+                    <th>TIPO DE VIDRIO</th>
+                    <th>PERFORACIÓN</th>
+                    <th>ANCHO</th>
+                    <th>ALTO</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Html.DisplayFor(x => x.Producto.SAP)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.NAGS)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Modelo.Marca.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Modelo.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.StartYear)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.EndYear)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.TipoParte.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.TipoVidrio.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Perforacion)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Ancho)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Alto)</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table" data-horizontal-scroll="true">
+            <thead>
+                <tr>
+
+                    <th>BOTÓN</th>
+                    <th>RED</th>
+                    <th>SERIGRAFÍA</th>
+                    <th>SENSOR LLUVIA</th>
+                    <th>MOLDURA</th>
+                    <th>HOLDER</th>
+                    <th>SENSOR CONDENSACIÓN</th>
+                    <th>COLOR</th>
+                    <th>HOMOLOGO</th>
+                    <th>CLASIFICACIÓN</th>
+                    <th>MERCADO</th>
+                    <th>PROCEDENCIA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center">
+                        @if (Model.Producto.Boton)
+                        {<span class="mif-checkmark fg-green"></span> }
+                        else
+                        { <span class="mif-cross fg-red"></span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.Red)
+                        {<span class="mif-checkmark fg-green"></span> }
+                        else
+                        { <span class="mif-cross fg-red"></span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.Serigrafia)
+                        {<span class="mif-checkmark fg-green"></span> }
+                        else
+                        { <span class="mif-cross fg-red"></span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.SensorLluvia)
+                        {<span class="mif-checkmark fg-green"></span> }
+                        else
+                        { <span class="mif-cross fg-red"></span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.Moldura)
+                        {<span class="mif-checkmark fg-green"></span> }
+                        else
+                        { <span class="mif-cross fg-red"></span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.Holder)
+                        {<span class="mif-checkmark fg-green"></span> }
+                        else
+                        { <span class="mif-cross fg-red"></span>}
+                    </td>
+                    <td class="text-center">
+                        @if (Model.Producto.SensorCondensacion)
+                        {<span class="mif-checkmark fg-green"></span> }
+                        else
+                        { <span class="mif-cross fg-red"></span>}
+                    </td>
+                    <td>@Html.DisplayFor(x => x.Producto.Color.Nombre)</td>
+                    <td class="text-center">
+                        @if (Model.Producto.Homologo)
+                        {<span class="mif-checkmark fg-green"></span> }
+                        else
+                        { <span class="mif-cross fg-red"></span>}
+                    </td>
+                    <td>@Html.DisplayFor(x => x.Producto.TipoParte.Clasificacion.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Mercado.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Producto.Procedencia.Nombre)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        @using (Html.BeginForm("Delete", "Producto", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("PRDID", Model.Producto.ProductoId)
+            <div class="form-group">
+                <button type="submit" class="button alert">CONFIRMAR</button>
+            </div>
+        }
+    </div>
+    <div class="cell-md-4">
+        <div data-role="carousel">
+            @foreach (var imagen in Model.ProductoImagen)
+            {
+                <div class="slide">
+                    <img src="~/Resources/Uploads/@imagen.Imagen.Nombre" class="img-fluid" />
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,47 @@
+﻿@model Vitro.Models.ProfileViewModel
+
+@{
+    ViewBag.Title = "Mi Perfil";
+}
+
+<h2 class="text-upper">@ViewBag.Title</h2>
+<div class="row">
+    <div class="cell-md-6">
+        @if (TempData["Message"] != null)
+        {
+            <div class="panel fg-white text-upper text-center p-5" style="background: #005776;">
+                los cambios de tu perfil fueron realizados con exito @TempData["Message"]
+            </div>
+        }
+        <div class="my-4"></div>
+        @using (Html.BeginForm("Account", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                @Html.LabelFor(x => x.UserName)
+                @Html.TextBoxFor(x => x.UserName, new { @readonly = "readonly" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.Email)
+                @Html.TextBoxFor(x => x.Email)
+                @Html.ValidationMessageFor(x => x.Email, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.PhoneNumber)
+                @Html.TextBoxFor(x => x.PhoneNumber)
+                @Html.ValidationMessageFor(x => x.PhoneNumber, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(x => x.Password)
+                @Html.TextBoxFor(x => x.Password)
+                @Html.ValidationMessageFor(x => x.Password, null, new { @class = "fg-red" })
+            </div>
+            <div class="form-group">
+                <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+            </div>
+        }
+    </div>
+</div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}

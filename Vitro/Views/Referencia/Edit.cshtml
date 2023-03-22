@@ -1,0 +1,312 @@
+﻿@model Vitro.Models.AtributoEditViewModel
+
+@{
+    ViewBag.Title = "Atributos de Producto";
+}
+
+<h2 class="text-upper h1">@ViewBag.Title</h2>
+<hr class="bg-gray" />
+<div class="grid h-vh-100">
+    <div class="row">
+        <div class="cell-md-2">
+            <ul class="sidenav-counter sidenav-counter-expand-md">
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Pais"})" style="color: #005776;">
+                        <span class="mif-location icon"></span>
+                        <span class="title">PAISES</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Marca"})" style="color: #005776;">
+                        <span class="mif-registered icon"></span>
+                        <span class="title">MARCAS</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Modelo"})" style="color: #005776;">
+                        <span class="mif-apps icon"></span>
+                        <span class="title">MODELOS</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Clasificacion"})" style="color: #005776;">
+                        <span class="mif-dashboard icon"></span>
+                        <span class="title">CLASIFICACIONES</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="TPartes"})" style="color: #005776;">
+                        <span class="mif-layers icon"></span>
+                        <span class="title">TIPOS DE PARTES</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="TVidrios"})" style="color: #005776;">
+                        <span class="mif-checkmark icon"></span>
+                        <span class="title">TIPOS DE VIDRIO</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Color"})" style="color: #005776;">
+                        <span class="mif-paint icon"></span>
+                        <span class="title">COLORES</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Mercado"})" style="color: #005776;">
+                        <span class="mif-earth icon"></span>
+                        <span class="title">MERCADOS</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index","Referencia",new { Page="Procedencia"})" style="color: #005776;">
+                        <span class="mif-map icon"></span>
+                        <span class="title">PROCEDENCIAS</span>
+                        <span class=""></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="cell-md-10">
+            @switch (Request.Params["Page"])
+            {
+                case "Pais":
+                    <h3 class="text-light"> EDITAR PAIS</h3>
+                    using (Html.BeginForm("Edit", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Pais" })
+                        @Html.HiddenFor(x => x.EntityId)
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Nombre de País:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(x => x.Activo, new { data_role = "checkbox", data_caption = "Activo" })
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    break;
+                case "Marca":
+                    <h3 class="text-light">EDITAR MARCA</h3>
+                    using (Html.BeginForm("Edit", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.EntityId)
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Marca" })
+                        <div class="row">
+                            <div class="cell-6">
+                                <label>País:</label>
+                                @Html.DropDownListFor(x => x.PaisId, new SelectList(Model.Paises, "PaisId", "Nombre"), "Seleccione ...", new { data_role = "select" })
+                            </div>
+                            <div class="cell-md-6">
+                                <label>Nombre de Marca:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(x => x.Activo, new { data_role = "checkbox", data_caption = "Activo" })
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+
+                    break;
+                case "Modelo":
+                    <h3 class="text-light">EDITAR MODELO</h3>
+                    using (Html.BeginForm("Edit", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.EntityId)
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Modelo" })
+                        <div class="row">
+                            <div class="cell-4">
+                                <label>País:</label>
+                                @Html.DropDownListFor(x => x.PaisId, new SelectList(Model.Paises, "PaisId", "Nombre"), new { data_role = "none" })
+                            </div>
+                            <div class="cell-4">
+                                <label>Marca:</label>
+                                @Html.DropDownListFor(x => x.MarcaId, new SelectList(Model.Marcas, "MarcaId", "Nombre"), new { })
+                            </div>
+                            <div class="cell-md-4">
+                                <label>Nombre de Modelo:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(x => x.Activo, new { data_role = "checkbox", data_caption = "Activo" })
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    break;
+                case "Clasificacion":
+                    <h3 class="text-light">EDITAR CLASIFICACIÓN</h3>
+                    using (Html.BeginForm("Edit", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.EntityId)
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Clasificacion" })
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Nombre de Clasificación:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(x => x.Activo, new { data_role = "checkbox", data_caption = "Activo" })
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    break;
+                case "TPartes":
+                    <h3 class="text-light">EDITAR TIPO DE PARTE</h3>
+                    using (Html.BeginForm("Edit", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.EntityId)
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "TPartes" })
+                        <div class="row">
+                            <div class="cell-6">
+                                <label>Clasificación:</label>
+                                @Html.DropDownListFor(x => x.ClasificacionId, new SelectList(Model.Clasificaciones, "ClasificacionId", "Nombre"), new { data_role = "select" })
+                            </div>
+                            <div class="cell-md-6">
+                                <label>Nombre Tipo de Parte:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(x => x.Activo, new { data_role = "checkbox", data_caption = "Actico" })
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    break;
+                case "TVidrios":
+                    <h3 class="text-light">TIPO DE VIDRIOS</h3>
+                    using (Html.BeginForm("Edit", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.EntityId)
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "TVidrios" })
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Nombre Tipo de Vidrio:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(x => x.Activo, new { data_role = "checkbox", data_caption = "Activo" })
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    break;
+                case "Color":
+                    <h3 class="text-light">COLORES</h3>
+                    using (Html.BeginForm("Edit", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.EntityId)
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Color" })
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Código de Color:</label>
+                                @Html.TextBoxFor(x => x.Codigo)
+                            </div>
+                            <div class="cell-md-6">
+                                <label>Nombre de Color:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(x => x.Activo, new { data_role = "checkbox", data_caption = "Activo" })
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    break;
+                case "Mercado":
+                    <h3 class="text-light">EIDTAR MERCADO</h3>
+                    using (Html.BeginForm("Edit", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.EntityId)
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Mercado" })
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Nombre de Mercado:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(x => x.Activo, new { data_role = "checkbox", data_caption = "Activo" })
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    break;
+                case "Procedencia":
+                    <h3 class="text-light">PROCEDENCIAS</h3>
+                    using (Html.BeginForm("Edit", "Referencia", FormMethod.Post, new { }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(x => x.EntityId)
+                        @Html.HiddenFor(x => x.Atributo, new { Value = "Procedencia" })
+                        <div class="row">
+                            <div class="cell-md-6">
+                                <label>Procedencia:</label>
+                                @Html.TextBoxFor(x => x.Definicion)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(x => x.Activo, new { data_role = "checkbox", data_caption = "Activo" })
+                        </div>
+                        <div class="form-group my-5">
+                            <button type="submit" class="button fg-white" style="background-color: #0057b8;">GUARDAR</button>
+                        </div>
+
+                    }
+                    break;
+            }
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @Scripts.Render("~/bundles/angular")
+    <script src="~/Scripts/edtattr.js"></script>
+}

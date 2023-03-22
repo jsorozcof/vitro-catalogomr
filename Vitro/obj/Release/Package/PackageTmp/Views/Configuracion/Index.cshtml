@@ -1,0 +1,63 @@
+﻿@model Vitro.Models.ConfiguracionViewModel
+@{
+    ViewBag.Title = "CONFIGURACIONES";
+}
+
+<h2 class="text-upper h1">configuraciones</h2>
+
+<div class="row">
+    <div class="cell-12">
+        <a href="@Url.Action("Edit","Configuracion",new { id=Model.ConfiguracionId })" class="button success small">CONFIG. PRODUCTOS NUEVOS</a>
+    </div>
+    <div class="cell-12">
+        <table class="table striped table-border cell-border">
+            <tr>
+                <th colspan="2">CONFIGURACIONES PRODUCTOS NUEVOS</th>
+            </tr>
+            <tr>
+                <th>DIAS VIGENTES NUEVOS PRODUCTOS</th>
+                <td class="text-center">@Html.DisplayFor(x => x.DiasVigenciaNuevosProductos)</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="cell-12">
+        <a href="@Url.Action("Mail","Configuracion")" class="button success small">CONFIG. CORREO ELECTRONICO</a>
+    </div>
+    <div class="cell-12">
+        <table class="table table-border cell-border">
+            <tr class="bg-light">
+                <th colspan="2">CONFIGURACIONES DE CORREO ELCTRONICO</th>
+            </tr>
+            <tr>
+                <th>HOST</th>
+                <td>@Html.DisplayFor(x => x.MailConfig.Host)</td>
+            </tr>
+            <tr>
+                <th>PUERTO</th>
+                <td>@Html.DisplayFor(x => x.MailConfig.Puerto)</td>
+            </tr>
+            <tr>
+                <th>CUENTA DE CORREO ELECTRONICO</th>
+                <td>@Html.DisplayFor(x => x.MailConfig.MailAccount)</td>
+            </tr>
+            <tr>
+                <th>SSL HABILITADO</th>
+                <td>
+                    @if (Model.MailConfig.HabilitarSSL.HasValue)
+                    {
+                        if (Model.MailConfig.HabilitarSSL.Value)
+                        {
+                            <span>SI</span>
+                        }
+                        else
+                        {
+                            <span>NO</span>
+                        }
+                    }
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

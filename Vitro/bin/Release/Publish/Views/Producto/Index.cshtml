@@ -1,0 +1,211 @@
+﻿@model Vitro.Models.ProductoViewModel
+@{
+    /**/
+
+    ViewBag.Title = "Productos";
+}
+
+<h2 class="text-upper h1">@ViewBag.Title</h2>
+
+<hr />
+<div class="grid h-vh-100">
+    <div class="panel fg-white p-5 text-upper" style="background-color: #005776;display: none;">
+        Total Productos: @Html.DisplayFor(x => x.TotalProductos) =>  Produtos Sin Imagen: @Html.DisplayFor(x => x.TotalproductIMG) productos
+    </div>
+    <div class="row" ng-app="app" ng-controller="productoController">
+        <div class="cell-12">
+            <ul data-role="tabs" data-expand="true">
+                <li><a href="#busquedaCodigo" class="text-upper text-light">por código</a></li>
+                <li><a href="#busqueda" class="text-upper text-light">por modelo</a></li>
+                <li><a href="@Url.Action("Create","Producto")"><span class="mif-plus"></span> NUEVO PRODUCTO</a></li>
+            </ul>
+            <div id="busquedaCodigo">
+                @using (Html.BeginForm("Retrieve", "Producto", FormMethod.Post))
+                {
+                    <div class="form-group">
+                        <label>Buscar Por:</label>&emsp;
+                        @Html.RadioButtonFor(x => x.Parametro, "SAP", new { data_role = "radio", data_style = "2", @checked = "", data_caption = "Código SAP" })
+                        @Html.RadioButtonFor(x => x.Parametro, "NAGS", new { data_role = "radio", data_style = "2", data_caption = "Código NAGS" })
+                    </div>
+                    <div class="form-group">
+                        <label>Párametros de Búsqueda:</label>
+                        @Html.TextBoxFor(x => x.Busqueda, new { data_role = "input" })
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="button fg-white" style="background-color: #0057b8;">BUSCAR</button>
+                    </div>
+                    @Html.HiddenFor(x => x.Mode, new { Value = "ProductoViewModel" })
+                    @Html.AntiForgeryToken()
+                }
+            </div>
+            <div id="busqueda" class="my-5">
+                @using (Html.BeginForm("Retrieve", "Producto", FormMethod.Post))
+                {
+                    <div class="row">
+                        <div class="cell-md-3">
+                            <label>Marca:</label>
+                            @Html.DropDownListFor(x => x.Marca, new SelectList(Model.Marcas, "MarcaId", "Nombre"), "Seleccione...", new { ng_change = "marcaChange()", ng_model = "marcaSelected" })
+                        </div>
+                        <div class="cell-md-3">
+                            <label>Modelo:</label>
+                            <select name="Modelo" id="Modelo">
+                                <option ng-repeat="modelo in modelos" value="{{modelo.ModeloId}}">{{modelo.Nombre}}</option>
+                            </select>
+                        </div>
+                        <div class="cell-md-3">
+                            <label>Año:</label>
+                            @Html.TextBoxFor(x => x.Year, new { data_role = "input" })
+                        </div>
+                    </div>
+                    <div class="form-group mt-4">
+                        <button type="submit" class="button fg-white mb-5" style="background-color: #0057b8;">BUSCAR</button>
+                    </div>
+                    @Html.HiddenFor(x => x.Mode, new { Value = "ProductoViewModel2" })
+                    @Html.AntiForgeryToken()
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row mt-6">
+        <div class="cell-md-8 search-wrapper"></div>
+        <div class="cell-md-4 rows-wrapper"></div>
+        <div class="cell-12 mt-5" ng-hide="notfound">
+            <table class="table mt-5" data-role="table" data-search-wrapper=".search-wrapper" data-rows-wrapper=".rows-wrapper" data-horizontal-scroll="true">
+                <thead>
+                    <tr>
+                        <th>PAIS</th>
+                        <th>CÓDIGO SAP</th>
+                        <th>CÓDIGO NAGS</th>
+                        <th>MARCA</th>
+                        <th>MODELO</th>
+                        <th>AÑO INICIAL</th>
+                        <th>AÑO FINAL</th>
+                        <th>TIPO DE PARTE</th>
+                        <th>TIPO DE VIDRIO</th>
+                        <th>PERFORACIÓN</th>
+                        <th>ANCHO</th>
+                        <th>ALTO</th>
+                        <th data-cls-column="text-center">BOTÓN</th>
+                        <th data-cls-column="text-center">RED</th>
+                        <th data-cls-column="text-center">SERIGRAFRÍA</th>
+                        <th data-cls-column="text-center">SENSOR LLUVIA</th>
+                        <th data-cls-column="text-center">MOLDURA</th>
+                        <th data-cls-column="text-center">HOLDER</th>
+                        <th data-cls-column="text-center">ANTENA</th>
+                        <th data-cls-column="text-center">SUBENSAMBLE</th>
+                        <th data-cls-column="text-center">SENSOR DE CONDENSACIÓN</th>
+                        <th>COLOR</th>
+                        <th data-cls-column="text-center">HOMOLOGO</th>
+                        <th data-cls-column="text-center">ACTIVO/INACTIVO</th>
+                        <th>CLASIFICACIÓN</th>
+                        <th>MERCADO</th>
+                        <th>PROCEDENCIA</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Productos != null && Model.Productos.Count() > 0)
+                    {
+                        foreach (var producto in Model.Productos)
+                        {
+                            <tr>
+                                <td>@producto.Modelo.Marca.Pais.Nombre</td>
+                                <td>@producto.SAP</td>
+                                <td>@producto.NAGS</td>
+                                <td>@producto.Modelo.Marca.Nombre</td>
+                                <td>@producto.Modelo.Nombre</td>
+                                <td>@producto.StartYear</td>
+                                <td>@producto.EndYear</td>
+                                <td>@producto.TipoParte.Nombre</td>
+                                <td>@producto.TipoVidrio.Nombre</td>
+                                <td>@producto.Perforacion</td>
+                                <td>@producto.Ancho</td>
+                                <td>@producto.Alto</td>
+                                <td>
+                                    @if (producto.Boton)
+                                    {<span>SI</span> }
+                                    else
+                                    { <span>NO</span>}
+                                </td>
+                                <td>
+                                    @if (producto.Red)
+                                    {<span>SI</span> }
+                                    else
+                                    { <span>NO</span>}
+                                </td>
+                                <td>
+                                    @if (producto.Serigrafia)
+                                    {<span>SI</span> }
+                                    else
+                                    { <span>NO</span>}
+                                </td>
+                                <td>
+                                    @if (producto.SensorLluvia)
+                                    {<span>SI</span> }
+                                    else
+                                    { <span>NO</span>}
+                                </td>
+                                <td>
+                                    @if (producto.Moldura)
+                                    {<span>SI</span> }
+                                    else
+                                    { <span>NO</span>}
+                                </td>
+                                <td>
+                                    @if (producto.Holder)
+                                    {<span>SI</span> }
+                                    else
+                                    { <span>NO</span>}
+                                </td>
+                                <td>
+                                    @if (producto.Antena)
+                                    {<span>SI</span> }
+                                    else
+                                    { <span>NO</span>}
+                                </td>
+                                <td>
+                                    @if (producto.SubEnsamble)
+                                    {<span>SI</span> }
+                                    else
+                                    { <span>NO</span>}
+                                </td>
+                                <td>
+                                    @if (producto.SensorCondensacion)
+                                    {<span>SI</span> }
+                                    else
+                                    { <span>NO</span>}
+                                </td>
+                                <td>@producto.Color.Nombre</td>
+                                <td>
+                                    @if (producto.Homologo)
+                                    {<span>SI</span> }
+                                    else
+                                    { <span>NO</span>}
+                                </td>
+                                <td>
+                                    @if (producto.Activo)
+                                    {<span>SI</span> }
+                                    else
+                                    { <span>NO</span>}
+                                </td>
+                                <td>@producto.TipoParte.Clasificacion.Nombre</td>
+                                <td>@producto.Mercado.Nombre</td>
+                                <td>@producto.Procedencia.Nombre</td>
+                                <td>
+                                    <a href="@Url.Action("Edit","Producto",new { id=producto.ProductoId})" class="button"><span class="mif-pencil"></span></a>
+                                    <a href="@Url.Action("Details","Producto",new { id=producto.ProductoId})" class="button"><span class="mif-eye"></span></a>
+                                    <a href="@Url.Action("Delete","Producto",new { id=producto.ProductoId})" class="button"><span class="mif-bin"></span></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/angular")
+    <script src="~/Scripts/busquedas_prod.js"></script>
+}

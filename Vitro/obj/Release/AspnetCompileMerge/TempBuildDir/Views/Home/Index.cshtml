@@ -1,0 +1,167 @@
+﻿@model Vitro.Models.HomeViewModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+    <div id="accordion-container">
+        <div class="cell-12">
+            <div>
+                <h2>PRODUCTOS NUEVOS</h2>
+                <div data-role="accordion" data-show-active="true" data-one-frame="false" data-active-heading-class="bg-site fg-white" data-on-frame-open="displayPortView(arguments[0])">
+                    @foreach (var marca in Model.ProductosNuevos.Select(x => x.Modelo.Marca).Distinct())
+                    {
+                        <div class="frame">
+                            <div class="heading">@marca.Nombre</div>
+                            <div class="content">
+                                <div class="row">
+                                    @foreach (var producto in Model.ProductosNuevos.Where(x => x.Modelo.MarcaId.Equals(marca.MarcaId)).OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear))
+                                    {
+
+                                        <div class="cell-4 d-block">
+                                            <table class="table striped compact" name="tblnv">
+                                                <tr style="background-color: #005776">
+                                                    <th colspan="2">
+                                                        <a href="@Url.Action("Details","Search",new { id=producto.ProductoId })" class="fg-white text-light">@producto.Descripcion</a>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>SAP</th>
+                                                    <td>@producto.SAP</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>NAGS</th>
+                                                    <td>@producto.NAGS</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>MARCA</th>
+                                                    <td>@producto.Modelo.Marca.Nombre</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>MODELO</th>
+                                                    <td>@producto.Modelo.Nombre</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>AÑO INICIAL</th>
+                                                    <td>@producto.StartYear</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>AÑO FINAL</th>
+                                                    <td>@producto.EndYear</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style="vertical-align:middle;">DESCRIPCION</th>
+                                                    <td name="tddescr">@producto.Descripcion</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2"><a href="@Url.Action("Details","Search",new { id=producto.ProductoId })" class="button fg-white small" name="btnnvdet" style="background-color: #0057b8">DETALLES</a></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        @if (!User.IsInRole("Ingenieria"))
+        {
+            <div class="cell-12">
+                <h2>PRODUCTOS EN PROMOCION</h2>
+                <div data-role="accordion" data-show-active="true" data-one-frame="false" data-active-heading-class="bg-site fg-white" data-on-frame-open="displayPortView(arguments[0])">
+                    @foreach (var marca in Model.ProductosPromocion.Select(x => x.Producto.Modelo.Marca).Distinct())
+                    {
+                        <div class="frame">
+                            <div class="heading">@marca.Nombre</div>
+                            <div class="content">
+                                <div class="row">
+                                    @foreach (var promocion in Model.ProductosPromocion.Where(x => x.Producto.Modelo.MarcaId.Equals(marca.MarcaId) && x.Stock > 0).OrderBy(x => x.Producto.Modelo.Nombre).ThenBy(x => x.Producto.StartYear))
+                                    {
+                                        <div class="cell-4">
+                                            <table class="table striped compact" name="tblnv">
+                                                <tr class="bg-green">
+                                                    <th colspan="2">
+                                                        <a href="@Url.Action("Details","Search",new { id=promocion.Producto.ProductoId })" class="fg-white text-light">@promocion.Producto.Descripcion</a>
+                                                        <div class="fg-white text-light size-1" style="font-size: 12px;">VALIDA DESDE @promocion.FechaInicio.ToString("dd/MM/yyyy") HASTA @promocion.FechaFinal.ToString("dd/MM/yyyy")</div>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>SAP</th>
+                                                    <td>@promocion.Producto.SAP</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>NAGS</th>
+                                                    <td>@promocion.Producto.NAGS</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>MARCA</th>
+                                                    <td>@promocion.Producto.Modelo.Marca.Nombre</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>MODELO</th>
+                                                    <td>@promocion.Producto.Modelo.Nombre</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>PRECIO</th>
+                                                    <td>&dollar; @promocion.Precio</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>UNIDADES DISPONIBLES</th>
+                                                    <td>@promocion.Stock</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>AÑO INICIAL</th>
+                                                    <td>@promocion.Producto.StartYear</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>AÑO FINAL</th>
+                                                    <td>@promocion.Producto.EndYear</td>
+                                                </tr>
+                                                <tr>
+                                                    <th style="vertical-align:middle;">DESCRIPCION</th>
+                                                    <td name="tddescr">@promocion.Producto.Descripcion</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2"><a href="@Url.Action("Details","Search",new { id=promocion.Producto.ProductoId })" class="button fg-white small" name="btnnvdet" style="background-color: #0057b8">DETALLES</a></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+@section scripts {
+    <script>
+        function displayPortView(el) {
+            var element = $(el);
+            var altura = $("#accordion-container").height();
+            console.log(el.clientHeight);
+            $("#accordion-container").height(altura + element.height() *2);
+        }
+
+        $(document).ready(function () {
+            var maxghtdescr = 0.00;
+            var maxghtpanel = 0.00;
+
+            $("div.panel").each(function () {
+                if ($(this).height() > maxghtpanel) {
+                    maxghtpanel = $(this).height();
+                }
+            });
+
+            $("td[name='tddescr']").each(function () {
+                if ($(this).height() > maxghtdescr) {
+                    maxghtdescr = $(this).height();
+                }
+            });
+            $("td[name='tddescr']").height(maxghtdescr);
+            $("div.panel").height(maxghtpanel);
+        });
+    </script>
+}
