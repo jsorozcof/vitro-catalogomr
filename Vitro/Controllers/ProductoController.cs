@@ -634,33 +634,29 @@ namespace Vitro.Controllers
                                     if (model.Actualizar)
                                     {
                                         var listMassiveSearch = db.MassiveProductImages.Where(m => m.Sap == temp.SAP).ToList();
-                                        for (int j = 0; j <= listMassiveSearch.Count; j++)
+                                        if (listMassiveSearch != null)
                                         {
-                                            var s = new VitroSql.MassiveProductImages();
+                                            foreach (var detail in listMassiveSearch)
+                                            {
+                                                db.MassiveProductImages.Remove(detail);
+                                                db.SaveChanges();
+                                            }
 
-                                            s.Id = listMassiveSearch[j].Id;
-                                            s.Nombre = listMassiveSearch[j].Nombre;
-                                            s.Extension = listMassiveSearch[j].Extension;
-                                            s.Contenido = listMassiveSearch[j].Contenido;
-                                            s.Posicion = listMassiveSearch[j].Posicion;
-                                            s.ProductoId = listMassiveSearch[j].ProductoId;
-
-                                            listPrductoImagen.Add(s);
-
+                                            listPrductoImagen.Add(new VitroSql.MassiveProductImages()
+                                            {
+                                                Nombre = filename,
+                                                Sap = temp.SAP,
+                                                Extension = extension,
+                                                Contenido = Imgbytes,
+                                                Posicion = IndiceImagen,
+                                                ProductoId = "",
+                                                ImagenId = ImagenId
+                                            });
                                         }
-
-                                        //listPrductoImagen.Add(new VitroSql.MassiveProductImages()
-                                        //{
-                                        //    Nombre = listMassive,
-                                        //    Sap = temp.SAP,
-                                        //    Extension = extension,
-                                        //    Contenido = listMassive.cote,
-                                        //    Posicion = IndiceImagen,
-                                        //    ProductoId = "",
-                                        //    ImagenId = ImagenId
-                                        //});
-                                        //listPrductoImagen.Add(massiveProdImages);
-
+                                        else
+                                            System.Diagnostics.Debug.WriteLine($"ERROR: El producto {temp.SAP} no ha sido creado");
+                                        
+                                       
                                     }
                                     else
                                     {
@@ -677,17 +673,6 @@ namespace Vitro.Controllers
                                         });
                                     }
 
-
-                                    //db.ImagenesCargue.Add(new VitroSql.ImagenCargue()
-                                    //{
-                                    //    ImagenId = $"{Guid.NewGuid()}",
-                                    //    Nombre = filename,
-                                    //    ImageSize = 500,
-                                    //    Indice = IndiceImagen,
-                                    //    ImageType = string.Empty,
-                                    //    CargueRef = temp.ProductoId,
-                                    //    Procesado = false
-                                    //});
                                     IndiceImagen++;
                                 }
                                 catch (Exception error)
@@ -714,7 +699,7 @@ namespace Vitro.Controllers
                 db.Database.CommandTimeout = 300;
             }
 
-            InsertorUpdateMaxImage(listPrductoImagen);
+            InsertorUpdateMaxImage(listPrductoImagen,model.Actualizar);
 
             TempData["ProccessRowsCount"] = table.Rows.Count;
             TempData["ErrorImageUploadsCount"] = reg_errors.Count;
@@ -724,50 +709,29 @@ namespace Vitro.Controllers
             return reg_errors.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
         }
 
-        public void InsertorUpdateMaxImage(List<MassiveProductImages> list)
+        public void InsertorUpdateMaxImage(List<MassiveProductImages> list, bool update)
         {
             try
             {
                 VitroSql.MassiveProductImages massiveProductImages = new VitroSql.MassiveProductImages();
                 List<VitroSql.MassiveProductImages> listMassiveProductImages = new List<VitroSql.MassiveProductImages>();
+
+                if(update)
+                  massiveProductImages.FechaActualizacion = DateTime.UtcNow;
+
                 foreach (var item in list)
                 {
+                    var producto = db.Productos.Where(x => x.SAP == item.Sap).FirstOrDefault();
+                    massiveProductImages.Nombre = item.Nombre;
+                    massiveProductImages.Sap = item.Sap;
+                    massiveProductImages.Extension = item.Extension;
+                    massiveProductImages.Contenido = item.Contenido;
+                    massiveProductImages.Posicion = item.Posicion;
+                    massiveProductImages.ProductoId = producto.ProductoId;
+                    massiveProductImages.ImagenId = item.ImagenId;
 
-                    var exist = db.MassiveProductImages.Where(x => x.ProductoId == item.ProductoId).FirstOrDefault();
-                    if (exist != null)
-                    {
-
-                        exist.Nombre = item.Nombre;
-                        exist.Extension = item.Extension;
-                        exist.Contenido = item.Contenido;
-
-                        db.SaveChanges();
-
-                    }  
-                    else
-                    {
-                        var producto = db.Productos.Where(x => x.SAP == item.Sap).FirstOrDefault();
-                        massiveProductImages.Nombre = item.Nombre;
-                        massiveProductImages.Sap = item.Sap;
-                        massiveProductImages.Extension = item.Extension;
-                        massiveProductImages.Contenido = item.Contenido;
-                        massiveProductImages.Posicion = item.Posicion;
-                        massiveProductImages.ProductoId = producto.ProductoId;
-                        massiveProductImages.ImagenId = item.ImagenId;
-
-                        // listMassiveProductImages.Add(massiveProductImages);
-                        //for (int i = 0; i <= 31; i++)
-                        //{
-
-
-                        db.MassiveProductImages.Add(massiveProductImages);
-                        //}
-                        //db.MassiveProductImages.AddRange(listMassiveProductImages);
-                        db.SaveChanges();
-
-                    }
-
-
+                    db.MassiveProductImages.Add(massiveProductImages);
+                    db.SaveChanges();
                 }
                
             }
