@@ -10,6 +10,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using VitroSql;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Vitro.Controllers
 {
@@ -472,7 +473,16 @@ namespace Vitro.Controllers
         public ActionResult Upload(Models.UploadViewModel model)
         {
             db.TemporalProductos.RemoveRange(db.TemporalProductos.ToArray());
+            model.Recursos = "C:\\imagenes_catalogo";
+
             ServerUploadsFolder();
+            if (!model.File.FileName.Contains("plantilla_cargue_inicial.xlsx") && !model.File.FileName.Contains("plantilla_cargue_actualizar.xlsx"))
+            {
+               TempData["ErrorMensaje"] = null;
+               TempData["ErrorMensaje"] = string.Format($"ERROR: Este archivo no es conocido");
+                return RedirectToAction("Upload", new { State = "Fails" });
+            }
+
             if (model.File == null)
             {
                 ModelState.AddModelError("File", "Debe seleccionar un archivo para la carga de productos.");
@@ -633,33 +643,64 @@ namespace Vitro.Controllers
 
                                     if (model.Actualizar)
                                     {
-                                        var listMassiveSearch = db.MassiveProductImages.Where(m => m.Sap == temp.SAP).ToList();
-                                        if (listMassiveSearch != null)
+                                        if (!model.File.FileName.Contains("plantilla_cargue_actualizar.xlsx"))
                                         {
-                                            foreach (var detail in listMassiveSearch)
-                                            {
-                                                db.MassiveProductImages.Remove(detail);
-                                                db.SaveChanges();
-                                            }
-
-                                            listPrductoImagen.Add(new VitroSql.MassiveProductImages()
-                                            {
-                                                Nombre = filename,
-                                                Sap = temp.SAP,
-                                                Extension = extension,
-                                                Contenido = Imgbytes,
-                                                Posicion = IndiceImagen,
-                                                ProductoId = "",
-                                                ImagenId = ImagenId
-                                            });
+                                            TempData["ErrorMensaje"] = null;
+                                            TempData["ErrorMensaje"] = string.Format($"ERROR: La plantilla selecionada para actualizar {model.File.FileName} no es la correcta ");
+                                            return RedirectToAction("Upload", new { State = "Fails" });
                                         }
+
+                                        var listMassiveSearch = db.MassiveProductImages.Where(m => m.Sap == temp.SAP).ToList();
+                                        var listProduct = db.Productos.Where(m => m.SAP == temp.SAP).FirstOrDefault();
+                                        if (listProduct != null)
+                                        {
+                                            if (listMassiveSearch.Count > 0)
+                                            {
+                                                foreach (var detail in listMassiveSearch)
+                                                {
+                                                    db.MassiveProductImages.Remove(detail);
+                                                    db.SaveChanges();
+                                                }
+
+                                            }
+                                            //else
+                                            //{
+                                            //    TempData["ErrorMensaje"] = null;
+                                            //    TempData["ErrorMensaje"] = string.Format($"ERROR: El producto {temp.SAP} no tiene imagenes asociadas para actualizar");
+                                            //    return RedirectToAction("Upload", new { State = "Fails" });
+
+                                            //}
+
+                                        }
+
                                         else
-                                            System.Diagnostics.Debug.WriteLine($"ERROR: El producto {temp.SAP} no ha sido creado");
-                                        
-                                       
+                                        {
+                                            TempData["ErrorMensaje"] = null;
+                                            TempData["ErrorMensaje"] = string.Format($"ERROR: El producto {temp.SAP} no ha sido creado");
+                                            return RedirectToAction("Upload", new { State = "Fails" });
+
+                                        }
+
+                                        listPrductoImagen.Add(new VitroSql.MassiveProductImages()
+                                        {
+                                            Nombre = filename,
+                                            Sap = temp.SAP,
+                                            Extension = extension,
+                                            Contenido = Imgbytes,
+                                            Posicion = IndiceImagen,
+                                            ProductoId = "",
+                                            ImagenId = ImagenId
+                                        });
                                     }
-                                    else
+
+                                    else if (model.File.FileName.Contains("plantilla_cargue_actualizar.xlsx"))
                                     {
+                                        TempData["ErrorMensaje"] = null;
+                                        TempData["ErrorMensaje"] = string.Format($"ERROR: La plantilla seleccionada para cargar {model.File.FileName} no es la correcta, Si esta intentado actualizar selecione la casilla Actualizar Registros ");
+                                        return RedirectToAction("Upload", new { State = "Fails" });
+
+                                    }
+                                    else {
                                         //List add
                                         listPrductoImagen.Add(new VitroSql.MassiveProductImages()
                                         {
@@ -699,39 +740,64 @@ namespace Vitro.Controllers
                 db.Database.CommandTimeout = 300;
             }
 
-            InsertorUpdateMaxImage(listPrductoImagen,model.Actualizar);
+            InsertorUpdateMaxImage(listPrductoImagen,model.Actualizar, model.File.FileName, table, reg_errors);
+            return reg_errors.Count > 0 ? RedirectToAction("Upload", new { State = "Upload" }) : RedirectToAction("Upload", new { State = "Upload" });
 
-            TempData["ProccessRowsCount"] = table.Rows.Count;
-            TempData["ErrorImageUploadsCount"] = reg_errors.Count;
-            TempData["ErrorImageUploads"] = reg_errors;
-            TempData["ProccessSuccessCount"] = db.TemporalProductos.Count(x => x.Valido);
-            TempData["ProccessFailsCount"] = db.TemporalProductos.Count(x => !x.Valido);
-            return reg_errors.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
         }
 
-        public void InsertorUpdateMaxImage(List<MassiveProductImages> list, bool update)
+        public ActionResult InsertorUpdateMaxImage(List<MassiveProductImages> list, bool update,string fileName, DataTable table, List<VitroSql.TempProducto> reg_errors)
         {
             try
             {
+               
                 VitroSql.MassiveProductImages massiveProductImages = new VitroSql.MassiveProductImages();
                 List<VitroSql.MassiveProductImages> listMassiveProductImages = new List<VitroSql.MassiveProductImages>();
-
-                if(update)
-                  massiveProductImages.FechaActualizacion = DateTime.UtcNow;
+                
 
                 foreach (var item in list)
                 {
                     var producto = db.Productos.Where(x => x.SAP == item.Sap).FirstOrDefault();
-                    massiveProductImages.Nombre = item.Nombre;
-                    massiveProductImages.Sap = item.Sap;
-                    massiveProductImages.Extension = item.Extension;
-                    massiveProductImages.Contenido = item.Contenido;
-                    massiveProductImages.Posicion = item.Posicion;
-                    massiveProductImages.ProductoId = producto.ProductoId;
-                    massiveProductImages.ImagenId = item.ImagenId;
+                    var productImages = db.MassiveProductImages.Where(x => x.Sap == producto.SAP).FirstOrDefault();
+                    
+                    if (!update && fileName == "plantilla_cargue_inicial.xlsx")
+                    {
+                        if (productImages != null && productImages.FechaActualizacion != null)
+                        {
+                            TempData["ErrorMensaje"] = null;
+                            var sb = new System.Text.StringBuilder();
+                            sb.AppendLine(item.Sap.ToString());
+                            TempData["ErrorMensaje"] = string.Format($"ERROR: Esta intentando crear productos {sb} que ya existen");
+                            return reg_errors.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
+                        }
+                        else 
+                        {
+                            massiveProductImages.Nombre = item.Nombre;
+                            massiveProductImages.Sap = item.Sap;
+                            massiveProductImages.Extension = item.Extension;
+                            massiveProductImages.Contenido = item.Contenido;
+                            massiveProductImages.Posicion = item.Posicion;
+                            massiveProductImages.ProductoId = producto.ProductoId;
+                            massiveProductImages.ImagenId = item.ImagenId;
 
-                    db.MassiveProductImages.Add(massiveProductImages);
-                    db.SaveChanges();
+                            db.MassiveProductImages.Add(massiveProductImages);
+                            db.SaveChanges();
+                        }
+                    }
+                    else if (update && fileName == "plantilla_cargue_actualizar.xlsx")
+                    {
+                        massiveProductImages.FechaActualizacion = DateTime.UtcNow;
+                        massiveProductImages.Nombre = item.Nombre;
+                        massiveProductImages.Sap = item.Sap;
+                        massiveProductImages.Extension = item.Extension;
+                        massiveProductImages.Contenido = item.Contenido;
+                        massiveProductImages.Posicion = item.Posicion;
+                        massiveProductImages.ProductoId = producto.ProductoId;
+                        massiveProductImages.ImagenId = item.ImagenId;
+
+                        db.MassiveProductImages.Add(massiveProductImages);
+                        db.SaveChanges();
+                    }
+
                 }
                
             }
@@ -739,6 +805,14 @@ namespace Vitro.Controllers
             {
                 System.Diagnostics.Debug.WriteLine($"ERROR: {error.Message}");
             }
+
+            TempData["ProccessRowsCount"] = table.Rows.Count;
+            TempData["ErrorImageUploadsCount"] = reg_errors.Count;
+            TempData["ErrorImageUploads"] = reg_errors;
+            TempData["ProccessSuccessCount"] = db.TemporalProductos.Count(x => x.Valido);
+            TempData["ProccessFailsCount"] = db.TemporalProductos.Count(x => !x.Valido);
+            return reg_errors.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
+
         }
 
         [HttpPost]
