@@ -127,39 +127,37 @@
     </div>
     <div class="cell-md-4" style="margin-bottom:50px">
         <div id="light-gallery">
-            @foreach (var imagen in Model.MassiveProductImage)
-            {
-                if (imagen != null)
+            @{
+                foreach (var imagen in Model.MassiveProductImage)
                 {
-                    string imagB64 = Convert.ToBase64String(imagen.Contenido);
-                    string imageData = string.Format("data:image/jpg;base64, {0}", imagB64);
+                    if (imagen != null)
+                    {
+                        string imagB64 = Convert.ToBase64String(imagen.Contenido);
+                        string imageData = string.Format("data:image/jpg;base64, {0}", imagB64);
 
-                    string ImageString = imageData;
-                    <a href='@string.Format("data:image/jpg;base64, {0}", imagB64)' name="thumbsimages">
-                        <img src="@ImageString" class="img-fluid img-thumbnail" />
-                    </a>
+                        string ImageString = imageData;
+                        <a href='@string.Format("data:image/jpg;base64, {0}", imagB64)' name="thumbsimages">
+                            <img src="@ImageString" class="img-fluid img-thumbnail" />
+                        </a>
+
+
+                    }
+                }
+
+                foreach (var img_antigua in Model.ProductoImagen)
+                {
+                    if (img_antigua != null)
+                    {
+                        <a href='~/Resources/Uploads/@img_antigua.Imagen.Nombre' name="thumbsimages">
+                            <img src="~/Resources/Uploads/@img_antigua.Imagen.Nombre" class="img-fluid img-thumbnail" />
+                        </a>
+
+                    }
                 }
             }
 
-            @*
-        @foreach (var imagen in Model.ProductoImagen.OrderBy(x => x.Imagen.Indice))
-        {
-            <a href="~/Resources/Uploads/@imagen.Imagen.Nombre" name="thumbsimages">
-                <img src="~/Resources/Uploads/@imagen.Imagen.Nombre" class="img-fluid img-thumbnail" />
-            </a>
-        }
-            *@
         </div>
-        @*<div data-role="carousel">
-                @foreach (var imagen in Model.ProductoImagen)
-                {
-                    <div class="slide">
-                        <div data-role="imagemagnifier" data-magnifier-mode="glass" data-lens-type="circle" data-magnifier-zoom="3">
-                            <img src="~/Resources/Uploads/@imagen.Imagen.Nombre" class="img-fluid" />
-                        </div>
-                    </div>
-                }
-            </div>*@
+
     </div>
 </div>
 <div class="row">

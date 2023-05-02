@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="~/Scripts/lightgallery/css/lg-transitions.min.css" />
     <link rel="stylesheet" href="~/Scripts/lightgallery/css/lg-fb-comment-box.min.css" />
 }
+
+
 <h2 class="text-upper h1">@ViewBag.Title</h2>
 <hr />
 <div class="row h-100 h-auto">
@@ -123,13 +125,13 @@
             </tbody>
         </table>
     </div>
-    <div class="cell-md-4">
+    <div class="cell-md-4" style="margin-bottom:50px">
         <div id="light-gallery">
             @foreach (var imagen in Model.MassiveProductImage)
             {
                 if (imagen != null)
                 {
-                    string imagB64 = Convert.ToBase64String(imagen);
+                    string imagB64 = Convert.ToBase64String(imagen.Contenido);
                     string imageData = string.Format("data:image/jpg;base64, {0}", imagB64);
 
                     string ImageString = imageData;
