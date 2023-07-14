@@ -82,3 +82,17 @@ F:\Fuentes_Estable_20200413_v2\Vitro\VitroSql\obj\Release\VitroSql.csproj.CoreCo
 F:\Fuentes_Estable_20200413_v2\Vitro\VitroSql\obj\Release\VitroSql.csproj.CopyComplete
 F:\Fuentes_Estable_20200413_v2\Vitro\VitroSql\obj\Release\VitroSql.dll
 F:\Fuentes_Estable_20200413_v2\Vitro\VitroSql\obj\Release\VitroSql.pdb
+C:\Repos\vitro-catalogomr\VitroSql\bin\Release\VitroSql.dll.config
+C:\Repos\vitro-catalogomr\VitroSql\bin\Release\VitroSql.dll
+C:\Repos\vitro-catalogomr\VitroSql\bin\Release\VitroSql.pdb
+C:\Repos\vitro-catalogomr\VitroSql\bin\Release\EntityFramework.dll
+C:\Repos\vitro-catalogomr\VitroSql\bin\Release\EntityFramework.SqlServer.dll
+C:\Repos\vitro-catalogomr\VitroSql\bin\Release\EntityFramework.xml
+C:\Repos\vitro-catalogomr\VitroSql\bin\Release\EntityFramework.SqlServer.xml
+C:\Repos\vitro-catalogomr\VitroSql\bin\Release\es\EntityFramework.resources.dll
+C:\Repos\vitro-catalogomr\VitroSql\bin\Release\es\EntityFramework.SqlServer.resources.dll
+C:\Repos\vitro-catalogomr\VitroSql\obj\Release\VitroSql.csproj.AssemblyReference.cache
+C:\Repos\vitro-catalogomr\VitroSql\obj\Release\VitroSql.csproj.CoreCompileInputs.cache
+C:\Repos\vitro-catalogomr\VitroSql\obj\Release\VitroSql.csproj.CopyComplete
+C:\Repos\vitro-catalogomr\VitroSql\obj\Release\VitroSql.dll
+C:\Repos\vitro-catalogomr\VitroSql\obj\Release\VitroSql.pdb
