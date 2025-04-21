@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Collections.Generic;
 using System.Data;
 using Vitro.Models;
+using VitroSql;
 
 namespace Vitro.Controllers
 {
@@ -93,31 +94,56 @@ namespace Vitro.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (!db.Productos.Any(x => x.ProductoId.Equals(id)))
+            //if (!db.Productos.Any(x => x.ProductoId.Equals(id)))
+            //{
+            //    return HttpNotFound();
+            //}
+            if (!db.TbProduct.Any(x => x.ProductId.Equals(id)))
             {
                 return HttpNotFound();
             }
-
             if (string.IsNullOrEmpty(id))
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (!db.Productos.Any(x => x.ProductoId.Equals(id)))
+            //if (!db.Productos.Any(x => x.ProductoId.Equals(id)))
+            //{
+            //    return HttpNotFound();
+            //}
+            if (!db.TbProduct.Any(x => x.ProductId.Equals(id)))
             {
                 return HttpNotFound();
             }
+            //var producto = db.Productos.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductoId.Equals(id)).FirstOrDefault();
+            var producto = db.TbProduct.Include(x => x.Modelo.Marca)
+                                        .Include(x => x.Modelo).Include(x => x.TipoParte)
+                                        .Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion)
+                                        .Include(x => x.Mercado).Include(x => x.Color)
+                                        .Include(x => x.Procedencia).Where(x => x.ProductId.Equals(id)).FirstOrDefault();
 
-            var producto = db.Productos.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductoId.Equals(id)).FirstOrDefault();
-            var homologos = db.Productos.Include(x => x.Modelo).Where(x => x.NAGS.ToLower().Contains(producto.NAGS.ToLower())).ToList();
-          
+            //var homologos = db.Productos.Include(x => x.Modelo).Where(x => x.NAGS.ToLower().Contains(producto.NAGS.ToLower())).ToList();
+            var homologos = db.TbProduct.Include(x => x.Modelo).Where(x => x.NAGS.ToLower().Contains(producto.NAGS.ToLower())).ToList();
+            //var imagenes = db.ProductImages
+            //     .SqlQuery($"SELECT p.ProductId,  pi.SAP AS Sap, pi.ImagenId, pi.Contenido, pi.Posicion, pi.Nombre FROM Product p LEFT JOIN ProductImages pi ON p.ProductId = pi.ProductId ORDER BY p.ProductId;")
+            //     .ToList();
+
+            var imagenes = db.Database.SqlQuery<ProductImageDto>(@"
+                    SELECT Nombre, Posicion, Contenido 
+                    FROM ProductImages 
+                    WHERE ProductId = @p0 ORDER BY Posicion", producto.ProductId).ToList();
+
+            foreach (var img in imagenes)
+            {
+                //Console.WriteLine($"ImagenId: {img.ImagenId}, ProductId: {img.ProductId}, Posicion: {img.Posicion}");
+            }
 
             var viewmodel = new Models.DetailsProductoViewModel()
             {
-                Producto = producto,
-                ProductoImagen = db.ProductoImagenes.Include(x => x.Imagen).Where(x => x.ProductoId.Equals(producto.ProductoId)).ToArray(),
-                MassiveProductImage = db.MassiveProductImages.Where(x => x.ProductoId.Equals(producto.ProductoId)).OrderBy(or => or.Posicion).ToArray(),
+                Product = producto,
+                //ProductoImagen = db.ProductoImagenes.Include(x => x.Imagen).Where(x => x.ProductoId.Equals(producto.ProductId)).ToArray(),
+                ProductImages = imagenes.ToList(),
                 //ImagenCargue = db.ImagenesCargue.Where(x => !x.CargueRef.Equals(producto.ProductoId)).ToArray(),
-                Homologos = homologos.Where(x => !x.ProductoId.Equals(producto.ProductoId)).ToList()
+                Homologos = homologos.Where(x => !x.ProductId.Equals(producto.ProductId)).ToList()
             };
 
 

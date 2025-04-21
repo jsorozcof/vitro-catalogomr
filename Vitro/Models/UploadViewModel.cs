@@ -16,5 +16,6 @@ namespace Vitro.Models
         public bool Actualizar { get; set; }
 
         public List<VitroSql.TempProducto> TempProductos { get; set; }
+        public List<LogErrorCargaViewModel> Errores { get; set; }
     }
 }

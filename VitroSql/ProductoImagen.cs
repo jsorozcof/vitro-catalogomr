@@ -13,5 +13,7 @@ namespace VitroSql
 
         public Imagen Imagen { get; set; }
         public Producto Producto { get; set; }
+        public TbProduct Product { get; set; }
+        public string ProductId { get; set; }
     }
 }

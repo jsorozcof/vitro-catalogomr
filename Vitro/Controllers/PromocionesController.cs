@@ -25,7 +25,7 @@ namespace Vitro.Controllers
 
         public ActionResult Details()
         {
-            var promociones = db.ProductoPromociones.Include(x => x.Producto).Where(x => x.Precio > 0).ToList();
+            var promociones = db.ProductoPromociones.Include(x => x.Product).Where(x => x.Precio > 0).ToList();
             return View(promociones);
         }
 
@@ -36,20 +36,20 @@ namespace Vitro.Controllers
                 return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
             }
 
-            var promocion = db.ProductoPromociones.Include(x => x.Producto).Where(x => x.PromocionId.Equals(id)).FirstOrDefault();
+            var promocion = db.ProductoPromociones.Include(x => x.Product).Where(x => x.PromocionId.Equals(id)).FirstOrDefault();
             if (promocion == null)
             {
                 return HttpNotFound();
             }
             var model = new Models.PromocionesViewModel()
             {
-                ProductoId = promocion.ProductoId,
+                ProductoId = promocion.ProductId,
                 PromocionId = promocion.PromocionId,
                 FechaFinal = promocion.FechaFinal,
                 FechaInicio = promocion.FechaInicio,
-                Descripcion = promocion.Producto.Descripcion,
-                SAP = promocion.Producto.SAP,
-                NAGS = promocion.Producto.NAGS,
+                Descripcion = promocion.Product.Descripcion,
+                SAP = promocion.Product.SAP,
+                NAGS = promocion.Product.NAGS,
                 Precio = promocion.Precio,
                 Stock = promocion.Stock
             };
@@ -121,7 +121,7 @@ namespace Vitro.Controllers
                     switch (column.ColumnName)
                     {
                         case "ID":
-                            promocion.ProductoId = row[column].ToString();
+                            promocion.ProductId = row[column].ToString();
                             break;
                         case "PRECIO":
                             promocion.Precio = Convert.ToDouble(row[column]);
@@ -139,7 +139,7 @@ namespace Vitro.Controllers
                 }
                 TimeSpan ndias = promocion.FechaFinal - promocion.FechaInicio;
                 promocion.DiasVigencia = ndias.Days;
-                if (!db.ProductoPromociones.Any(x => x.ProductoId.Equals(promocion.ProductoId)))
+                if (!db.ProductoPromociones.Any(x => x.ProductId.Equals(promocion.ProductId)))
                 {
                     promociones.Add(promocion);
                 }

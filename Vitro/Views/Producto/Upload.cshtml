@@ -17,7 +17,7 @@
         @if (TempData["ErrorMensaje"] != null)
         {
 
-            if(TempData["ErrorMensaje"].ToString().Contains("ERROR"))
+            if (TempData["ErrorMensaje"].ToString().Contains("ERROR"))
             {
                 classAlerta = "alert alert-danger";
             }
@@ -38,36 +38,50 @@
         @if (Request.Params["State"].Equals("Fails"))
         {
             <div class="panel fg-white p-5 text-upper bg-red">
-                <span>existen <strong>@TempData["ErrorImageUploadsCount"]</strong> imagenes que no pudieron ser procesadas de @TempData["ProccessRowsCount"] registros</span>
+                <span><strong>EL PROCESO DE CARGA HA SIDO INTERRUMPIDO DEBIDO A ERRORES. POR FAVOR, REVISE LOS DETALLES.</strong></span>
                 <div>
                     <a href="@Url.Action("Upload","Producto",new { State="Upload"})" class="button fg-white mt-5" style="background: #0057b8;">VOLVER</a>
+                    ||
+                    <a href="@Url.Action("Upload","Producto",new { State="Upload"})" class="button fg-white mt-5" style="background: #0057b8;">DESCARGAR DETALLE</a>
+                </div>
+                <div>
+                    
                 </div>
             </div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>SAP</th>
-                        <th>NAGS</th>
-                        <th>MARCA</th>
-                        <th>MODELO</th>
-                        <th>AÑO INICIAL</th>
-                        <th>AÑO FINAL</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var temp in Model.TempProductos)
-                    {
-                        <tr>
-                            <td>@temp.SAP</td>
-                            <td>@temp.NAGS</td>
-                            <td>@temp.MarcaId</td>
-                            <td>@temp.ModeloId</td>
-                            <td>@temp.StartYear</td>
-                            <td>@temp.EndYear</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            if (ViewBag.Errores != null && ((List<Vitro.Models.LogErrorCargaViewModel>)ViewBag.Errores).Count > 0)
+            {
+                <div class="row h-vh-100">
+                    <div class="cell-md-12">
+                        <h3>Errores en la Carga</h3>
+                        <table class="table" data-role="table" data-show-pagination="false" data-show-table-info="false" data-show-search="false" data-show-rows-steps="false" data-horizontal-scroll="true">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Usuario</th>
+                                    <th>Fila</th>
+                                    <th>Columna</th>
+                                    <th>Valor Incorrecto</th>
+                                    <th>Descripción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var error in (List<Vitro.Models.LogErrorCargaViewModel>)ViewBag.Errores)
+                                {
+                                    <tr>
+                                        <td>@error.FechaProceso</td>
+                                        <td>@error.Usuario</td>
+                                        <td>@error.Fila</td>
+                                        <td>@error.Columna</td>
+                                        <td>@error.ValorIncorrecto</td>
+                                        <td>@error.DescripcionError</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
         }
         else
         {
@@ -76,8 +90,6 @@
                 <div class="panel fg-white p-5 text-upper" style="background-color: #005776;">
                     <div>Se han procesado <strong>@TempData["ProccessRowsCount"]</strong> productos</div>
                     <div><span class="mif-chevron-right icon"></span> Número de registros exitosos <strong>@TempData["ProccessSuccessCount"]</strong></div>
-                    <div><span class="mif-chevron-right icon"></span> Número de registros fallidos <strong>@TempData["ProccessFailsCount"]</strong></div>
-                    <div><span class="mif-chevron-right icon"></span> Número de imagenes procesadas con errores <strong>@TempData["ErrorImageUploadsCount"]</strong></div>
                     <hr />
                     @using (Html.BeginForm("ResultUpload", "Producto", FormMethod.Post))
                     {

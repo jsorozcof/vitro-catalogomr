@@ -68,6 +68,7 @@
     <Compile Include="ProductoPromocion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sugerencia.cs" />
+    <Compile Include="TbProduct.cs" />
     <Compile Include="TempProducto.cs" />
     <Compile Include="TipoParte.cs" />
     <Compile Include="TipoVidrio.cs" />

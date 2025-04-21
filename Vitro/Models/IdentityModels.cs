@@ -36,11 +36,12 @@ namespace Vitro.Models
 
         
         public DbSet<VitroSql.Marca> Marcas { get; set; }
-        public DbSet<VitroSql.MassiveProductImages> MassiveProductImages { get; set; }
+        public DbSet<VitroSql.ProductImages> ProductImages { get; set; }
         public DbSet<VitroSql.Mercado> Mercados { get; set; }
         public DbSet<VitroSql.Modelo> Modelos { get; set; }
         public DbSet<VitroSql.Pais> Paises { get; set; }
         public DbSet<VitroSql.Producto> Productos { get; set; }
+        public DbSet<VitroSql.TbProduct> TbProduct { get; set; }
         public DbSet<VitroSql.TipoParte> TipoPartes { get; set; }
         public DbSet<VitroSql.TipoVidrio> TipoVidrios { get; set; }
         public DbSet<VitroSql.Color> Colores { get; set; }

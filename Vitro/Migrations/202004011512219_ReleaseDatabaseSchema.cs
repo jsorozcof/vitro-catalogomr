@@ -266,25 +266,28 @@ namespace Vitro.Migrations
                         Activo = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.TipoVidrioId);
-            
+
             CreateTable(
                 "dbo.ProductoPromocion",
                 c => new
-                    {
-                        PromocionId = c.String(nullable: false, maxLength: 128),
-                        FechaInicio = c.DateTime(nullable: false),
-                        FechaFinal = c.DateTime(nullable: false),
-                        DiasVigencia = c.Int(nullable: false),
-                        ProductoId = c.String(maxLength: 128),
-                        Precio = c.Double(nullable: false),
-                        Stock = c.Int(nullable: false),
-                        FechaCreacion = c.DateTime(nullable: false),
-                        FechaModificacion = c.DateTime(),
-                    })
+                {
+                    PromocionId = c.String(nullable: false, maxLength: 128),
+                    FechaInicio = c.DateTime(nullable: false),
+                    FechaFinal = c.DateTime(nullable: false),
+                    DiasVigencia = c.Int(nullable: false),
+                    ProductoId = c.String(maxLength: 128),
+                    Precio = c.Double(nullable: false),
+                    Stock = c.Int(nullable: false),
+                    FechaCreacion = c.DateTime(nullable: false),
+                    FechaModificacion = c.DateTime(),
+                    ProductId = c.String(maxLength: 128),
+                })
                 .PrimaryKey(t => t.PromocionId)
-                .ForeignKey("dbo.Producto", t => t.ProductoId)
-                .Index(t => t.ProductoId);
-            
+                .ForeignKey("dbo.Producto", t => t.ProductoId).Index(t => t.ProductoId)
+                .ForeignKey("dbo.Product", t => t.ProductId).Index(t => t.ProductId);
+
+
+
             CreateTable(
                 "dbo.AspNetRoles",
                 c => new

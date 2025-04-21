@@ -21,7 +21,7 @@
                 @using (Html.BeginForm("Create", "Downloader", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
-                    @Html.Hidden("_SRC", Model.Producto.ProductoId)
+                    @Html.Hidden("_SRC", Model.Product.ProductId)
                     <div class="form-group">
                         <button type="submit" class="button fg-white" style="background-color: #0057b8;"><span class="mif-file-pdf fg-white"></span> IMPRIMIR BÚSQUEDA</button>
                     </div>
@@ -46,15 +46,15 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>@Html.DisplayFor(x => x.Producto.SAP)</td>
-                    <td>@Html.DisplayFor(x => x.Producto.NAGS)</td>
-                    <td>@Html.DisplayFor(x => x.Producto.Modelo.Marca.Nombre)</td>
-                    <td>@Html.DisplayFor(x => x.Producto.Modelo.Nombre)</td>
-                    <td>@Html.DisplayFor(x => x.Producto.StartYear)</td>
-                    <td>@Html.DisplayFor(x => x.Producto.EndYear)</td>
-                    <td>@Html.DisplayFor(x => x.Producto.TipoParte.Nombre)</td>
-                    <td>@Html.DisplayFor(x => x.Producto.TipoVidrio.Nombre)</td>
-                    <td>@Html.DisplayFor(x => x.Producto.Perforacion)</td>
+                    <td>@Html.DisplayFor(x => x.Product.SAP)</td>
+                    <td>@Html.DisplayFor(x => x.Product.NAGS)</td>
+                    <td>@Html.DisplayFor(x => x.Product.Modelo.Marca.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Product.Modelo.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Product.StartYear)</td>
+                    <td>@Html.DisplayFor(x => x.Product.EndYear)</td>
+                    <td>@Html.DisplayFor(x => x.Product.TipoParte.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Product.TipoVidrio.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Product.Perforacion)</td>
                 </tr>
             </tbody>
         </table>
@@ -76,29 +76,29 @@
             </thead>
             <tbody>
                 <tr class="text-center">
-                    <td>@Html.DisplayFor(x => x.Producto.Ancho)</td>
-                    <td>@Html.DisplayFor(x => x.Producto.Alto)</td>
+                    <td>@Html.DisplayFor(x => x.Product.Ancho)</td>
+                    <td>@Html.DisplayFor(x => x.Product.Alto)</td>
                     <td class="text-center">
-                        @if (Model.Producto.Boton)
+                        @if (Model.Product.Boton)
                         {<div>SI</div> }
                         else
                         { <div>NO</div>}
                     </td>
                     <td class="text-center">
-                        @if (Model.Producto.Red)
+                        @if (Model.Product.Red)
                         {<div>SI</div> }
                         else
                         { <span>NO</span>}
                     </td>
                     <td class="text-center">
-                        @if (Model.Producto.Serigrafia)
+                        @if (Model.Product.Serigrafia)
                         {<span>SI</span> }
                         else
                         { <span>NO</span>}
                     </td>
-                    <td>@Html.DisplayFor(x => x.Producto.Color.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Product.Color.Nombre)</td>
                     <td class="text-center">
-                        @if (Model.Producto.Homologo)
+                        @if (Model.Product.Homologo)
                         {
                             <span>SI</span>
                         }
@@ -108,19 +108,19 @@
                         }
                     </td>
                     <td>
-                        @if (Model.Producto.Antena)
+                        @if (Model.Product.Antena == true)
                         {<span>SI</span>}
                         else
                         { <span>NO</span>}
                     </td>
                     <td>
-                        @if (Model.Producto.SubEnsamble)
+                        @if (Model.Product.SubEnsamble == true)
                         {<span>SI</span>}
                         else
                         { <span>NO</span>}
                     </td>
-                    <td>@Html.DisplayFor(x => x.Producto.TipoParte.Clasificacion.Nombre)</td>
-                    <td>@Html.DisplayFor(x => x.Producto.Mercado.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Product.TipoParte.Clasificacion.Nombre)</td>
+                    <td>@Html.DisplayFor(x => x.Product.Mercado.Nombre)</td>
                 </tr>
             </tbody>
         </table>
@@ -128,7 +128,7 @@
     <div class="cell-md-4" style="margin-bottom:50px">
         <div id="light-gallery">
             @{
-                foreach (var imagen in Model.MassiveProductImage)
+                foreach (var imagen in Model.ProductImages)
                 {
                     if (imagen != null)
                     {
@@ -144,16 +144,16 @@
                     }
                 }
 
-                foreach (var img_antigua in Model.ProductoImagen)
+                @*foreach (var img in Model.ProductImages)
                 {
-                    if (img_antigua != null)
+                    if (img != null)
                     {
-                        <a href='~/Resources/Uploads/@img_antigua.Imagen.Nombre' name="thumbsimages">
-                            <img src="~/Resources/Uploads/@img_antigua.Imagen.Nombre" class="img-fluid img-thumbnail" />
+                        <a href='~/Resources/Uploads/@img.Nombre' name="thumbsimages">
+                            <img src="~/Resources/Uploads/@img.Nombre" class="img-fluid img-thumbnail" />
                         </a>
 
                     }
-                }
+                }*@
             }
 
         </div>
@@ -193,7 +193,7 @@
                     </table>
                 </div>
                 <div class="card-footer">
-                    <a href="@Url.Action("Details","Search",new { id=homologo.ProductoId })" class="button small">DETALLES</a>
+                    <a href="@Url.Action("Details","Search",new { id=homologo.ProductId })" class="button small">DETALLES</a>
                 </div>
             </div>
         </div>

@@ -11,6 +11,12 @@ using System.Data.SqlClient;
 using System.Drawing;
 using VitroSql;
 using static iTextSharp.text.pdf.AcroFields;
+using VitroCore.Services;
+using System.Web.Configuration;
+using Microsoft.Ajax.Utilities;
+using System.Data.SqlTypes;
+using System.Diagnostics;
+using System.Web.Http.Results;
 
 namespace Vitro.Controllers
 {
@@ -18,6 +24,7 @@ namespace Vitro.Controllers
     public class ProductoController : Controller
     {
         private readonly Models.ApplicationDbContext db = new Models.ApplicationDbContext();
+        //private readonly ProcessProductRepository _productoService;
 
         public ActionResult Index()
         {
@@ -32,6 +39,8 @@ namespace Vitro.Controllers
                                      join IMG in db.Imagenes on PI.ImagenId equals IMG.ImagenId
                                      where IMG.Nombre.Contains("default")
                                      select new { PD.ProductoId }).Count();
+
+            
             return View(model);
         }
 
@@ -95,11 +104,12 @@ namespace Vitro.Controllers
                 return HttpNotFound();
             }
 
-            var producto = db.Productos.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductoId.Equals(id)).FirstOrDefault();
+            //var producto = db.Productos.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductoId.Equals(id)).FirstOrDefault();
+            var producto = db.TbProduct.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductId.Equals(id)).FirstOrDefault();
             var viewmodel = new Models.DetailsProductoViewModel()
             {
-                Producto = producto,
-                ProductoImagen = db.ProductoImagenes.Include(x => x.Imagen).Where(x => x.ProductoId.Equals(producto.ProductoId)).ToArray()
+                Product = producto,
+                ProductoImagen = db.ProductoImagenes.Include(x => x.Imagen).Where(x => x.ProductoId.Equals(producto.ProductId)).ToArray()
             };
             return View(viewmodel);
         }
@@ -286,11 +296,12 @@ namespace Vitro.Controllers
                 return HttpNotFound();
             }
 
-            var producto = db.Productos.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductoId.Equals(id)).FirstOrDefault();
+            //var producto = db.Productos.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductoId.Equals(id)).FirstOrDefault();
+            var producto = db.TbProduct.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductId.Equals(id)).FirstOrDefault();
             var viewmodel = new Models.DetailsProductoViewModel()
             {
-                Producto = producto,
-                ProductoImagen = db.ProductoImagenes.Include(x => x.Imagen).Where(x => x.ProductoId.Equals(producto.ProductoId)).ToArray()
+                Product = producto,
+                ProductoImagen = db.ProductoImagenes.Include(x => x.Imagen).Where(x => x.ProductId.Equals(producto.ProductId)).ToArray()
             };
             return View(viewmodel);
         }
@@ -448,6 +459,39 @@ namespace Vitro.Controllers
         {
             if (!string.IsNullOrEmpty(State) && State.Equals("Fails"))
             {
+                if(TempData["ProccessFailsCount"] != null )
+                {
+                    
+                     var errors = TempData["ProccessDataError"] as DataTable;
+                     var modelView = new Models.UploadViewModel();
+                    if (errors != null && errors.Rows.Count > 0)
+                    {
+
+                        var modelList = new List<Models.LogErrorCargaViewModel>();
+                        for (int i = 0; i < errors.Rows.Count; i++)
+                        {
+                            var model = new Models.LogErrorCargaViewModel();
+
+                            model.FechaProceso = Convert.ToDateTime(errors.Rows[i]["FECHA_PROCESO"]);
+                            model.Usuario = errors.Rows[i]["USUARIO"].ToString();
+                            model.Fila =  Convert.ToInt32(errors.Rows[i]["FILA"]);
+                            model.Columna = errors.Rows[i]["COLUMNA"].ToString();
+                            model.ValorIncorrecto = errors.Rows[i]["VALOR_INCORRECTO"].ToString();
+                            model.DescripcionError = errors.Rows[i]["DESCRIPCION_ERROR"].ToString();
+
+                            modelList.Add(model);
+                            
+                        }
+                        modelView = new Models.UploadViewModel()
+                        {
+                            Errores = modelList
+                        };
+                        ViewBag.Errores = modelList;
+                        //return RedirectToAction("Upload", new { State = "Fails" });
+                        return View(modelView);
+                    }
+                }
+
                 if (TempData["ErrorImageUploads"] != null)
                 {
                     var errors = TempData["ErrorImageUploads"] as List<VitroSql.TempProducto>;
@@ -470,7 +514,7 @@ namespace Vitro.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Upload(Models.UploadViewModel model)
+        public  ActionResult Upload(Models.UploadViewModel model)
         {
             db.TemporalProductos.RemoveRange(db.TemporalProductos.ToArray());
             model.Recursos = "C:\\imagenes_catalogo";
@@ -498,6 +542,7 @@ namespace Vitro.Controllers
             }
 
             DataTable table = new VitroCore.ExcelManager().ReadFile(model.File.InputStream);
+            ProcessProductRepository _processProductRepository = new ProcessProductRepository();
 
             if (table.Rows.Count > 1000)
             {
@@ -510,8 +555,10 @@ namespace Vitro.Controllers
             }
 
             List<VitroSql.TempProducto> reg_errors = new List<VitroSql.TempProducto>();
+            DataTable Errores = new DataTable();
             List<string> imagenes = new List<string>();
-            var listPrductoImagen = new List<MassiveProductImages>();
+            var listProductoImagen = new List<ProductImages>();
+            var productImages = new List<ProductImages>();
 
             if (table.Rows.Count <= 1000)
             {
@@ -612,126 +659,163 @@ namespace Vitro.Controllers
                                 break;
                         }
 
-                        if (column.ColumnName.ToLower().StartsWith("imagen"))
-                        {
-                            if (rows[column].ToString() != "")
-                            {
-                                if (Directory.Exists(model.Recursos))
-                                {
-                                    try
-                                    {
-                                        string root = Path.GetFullPath(model.Recursos);
-                                        var filename = string.Empty;
-                                        string extension = string.Empty;
+                        //int indiceImagen = 1;
+                        //if (column.ColumnName.ToLower().StartsWith("imagen"))
+                        //{
+                        //    var valor = rows[column].ToString().Trim();
+                        //    if (!string.IsNullOrWhiteSpace(valor) && Directory.Exists(model.Recursos))
+                        //    {
+                        //        try
+                        //        {
+                        //            var fullPath = Path.Combine(model.Recursos, valor);
+                        //            if (!System.IO.File.Exists(fullPath))
+                        //                throw new FileNotFoundException($"No se encontró la imagen: {fullPath}");
 
-                                        var result = Path.Combine(root, rows[column].ToString().Trim());
-                                        Image image = Image.FromFile(result);
-                                        filename = $"{DateTime.Now.Year}{DateTime.Now.Month}{DateTime.Now.Day}__{rows[column].ToString()}";
-                                        image.Save(Path.Combine(Server.MapPath("~/Resources/Uploads/"), filename));
-                                        temp.RefImagen = filename;
-                                        extension = Path.GetExtension(filename);
-                                        imagenes.Add(filename);
-                                       
+                        //            var nombreArchivo = $"{DateTime.Now:yyyyMMdd}_{valor}";
+                        //            var extension = Path.GetExtension(nombreArchivo);
+                        //            var rutaUpload = Path.Combine(Server.MapPath("~/Resources/Uploads/"), nombreArchivo);
 
-                                        string DefaultImagePath = Server.MapPath("~/Resources/Uploads/") + filename;
-                                        byte[] imageArray = System.IO.File.ReadAllBytes(DefaultImagePath);
-                                        string base64ImageRepresentation = Convert.ToBase64String(imageArray);
+                        //            Image.FromFile(fullPath).Save(rutaUpload);
+                        //            var contenido = System.IO.File.ReadAllBytes(rutaUpload);
+
+                        //            listProductoImagen.Add(new ProductImages
+                        //            {
+                        //                ProductId = "", //temp.ProductoId,
+                        //                Sap = temp.SAP,
+                        //                Nombre = nombreArchivo,
+                        //                Extension = extension,
+                        //                Contenido = contenido,
+                        //                Posicion = null,
+                        //                FechaCreacion = temp.FechaCreacion
+                        //            });
+                        //        }
+                        //        catch (Exception ex)
+                        //        {
+                        //            // Puedes usar imagen por defecto o registrar el error
+                        //            System.Diagnostics.Debug.WriteLine($"ERROR IMAGEN: {ex.Message}");
+                        //            // Imagen por defecto si deseas
+                        //        }
+                        //    }
+
+                        //    #region "Coment codigo anterior"
+                        //    //if (rows[column].ToString() != "")
+                        //    //{
+                        //    //    if (Directory.Exists(model.Recursos))
+                        //    //    {
+                        //    //        try
+                        //    //        {
+                        //    //            string root = Path.GetFullPath(model.Recursos);
+                        //    //            var filename = string.Empty;
+                        //    //            string extension = string.Empty;
+
+                        //    //            var result = Path.Combine(root, rows[column].ToString().Trim());
+                        //    //            Image image = Image.FromFile(result);
+                        //    //            filename = $"{DateTime.Now.Year}{DateTime.Now.Month}{DateTime.Now.Day}__{rows[column].ToString()}";
+                        //    //            image.Save(Path.Combine(Server.MapPath("~/Resources/Uploads/"), filename));
+                        //    //            temp.RefImagen = filename;
+                        //    //            extension = Path.GetExtension(filename);
+                        //    //            imagenes.Add(filename);
 
 
-                                        byte[] Imgbytes = imageArray;
-                                        string ImagenId = $"{Guid.NewGuid()}";
+                        //    //            string DefaultImagePath = Server.MapPath("~/Resources/Uploads/") + filename;
+                        //    //            byte[] imageArray = System.IO.File.ReadAllBytes(DefaultImagePath);
+                        //    //            string base64ImageRepresentation = Convert.ToBase64String(imageArray);
 
 
-                                        if (model.Actualizar)
-                                        {
-                                            if (!model.File.FileName.Contains("plantilla_cargue_actualizar.xlsx"))
-                                            {
-                                                TempData["ErrorMensaje"] = null;
-                                                TempData["ErrorMensaje"] = string.Format($"ERROR: La plantilla selecionada para actualizar {model.File.FileName} no es la correcta ");
-                                                return RedirectToAction("Upload", new { State = "Fails" });
-                                            }
+                        //    //            byte[] Imgbytes = imageArray;
+                        //    //            string ImagenId = $"{Guid.NewGuid()}";
 
-                                            var listMassiveSearch = db.MassiveProductImages.Where(m => m.Sap == temp.SAP).ToList();
-                                            var listProduct = db.Productos.Where(m => m.SAP == temp.SAP).FirstOrDefault();
-                                            if (listProduct != null)
-                                            {
-                                                if (listMassiveSearch.Count > 0)
-                                                {
-                                                    foreach (var detail in listMassiveSearch)
-                                                    {
-                                                        db.MassiveProductImages.Remove(detail);
-                                                        db.SaveChanges();
-                                                    }
 
-                                                }
-                                                //else
-                                                //{
-                                                //    TempData["ErrorMensaje"] = null;
-                                                //    TempData["ErrorMensaje"] = string.Format($"ERROR: El producto {temp.SAP} no tiene imagenes asociadas para actualizar");
-                                                //    return RedirectToAction("Upload", new { State = "Fails" });
+                        //    //            if (model.Actualizar)
+                        //    //            {
+                        //    //                if (!model.File.FileName.Contains("plantilla_cargue_actualizar.xlsx"))
+                        //    //                {
+                        //    //                    TempData["ErrorMensaje"] = null;
+                        //    //                    TempData["ErrorMensaje"] = string.Format($"ERROR: La plantilla selecionada para actualizar {model.File.FileName} no es la correcta ");
+                        //    //                    return RedirectToAction("Upload", new { State = "Fails" });
+                        //    //                }
 
-                                                //}
+                        //    //                var listMassiveSearch = db.ProductImages.Where(m => m.Sap == temp.SAP).ToList();
+                        //    //                var listProduct = db.TbProduct.Where(m => m.SAP == temp.SAP).FirstOrDefault();
+                        //    //                if (listProduct != null)
+                        //    //                {
+                        //    //                    if (listMassiveSearch.Count > 0)
+                        //    //                    {
+                        //    //                        foreach (var detail in listMassiveSearch)
+                        //    //                        {
+                        //    //                            db.ProductImages.Remove(detail);
+                        //    //                            db.SaveChanges();
+                        //    //                        }
 
-                                            }
+                        //    //                    }
+                        //    //                    //else
+                        //    //                    //{
+                        //    //                    //    TempData["ErrorMensaje"] = null;
+                        //    //                    //    TempData["ErrorMensaje"] = string.Format($"ERROR: El producto {temp.SAP} no tiene imagenes asociadas para actualizar");
+                        //    //                    //    return RedirectToAction("Upload", new { State = "Fails" });
 
-                                            else
-                                            {
-                                                TempData["ErrorMensaje"] = null;
-                                                TempData["ErrorMensaje"] = string.Format($"ERROR: El producto {temp.SAP} no ha sido creado");
-                                                return RedirectToAction("Upload", new { State = "Fails" });
+                        //    //                    //}
 
-                                            }
+                        //    //                }
 
-                                            listPrductoImagen.Add(new VitroSql.MassiveProductImages()
-                                            {
-                                                Nombre = filename,
-                                                Sap = temp.SAP,
-                                                Extension = extension,
-                                                Contenido = Imgbytes,
-                                                Posicion = IndiceImagen,
-                                                ProductoId = "",
-                                                ImagenId = ImagenId
-                                            });
-                                        }
+                        //    //                else
+                        //    //                {
+                        //    //                    TempData["ErrorMensaje"] = null;
+                        //    //                    TempData["ErrorMensaje"] = string.Format($"ERROR: El producto {temp.SAP} no ha sido creado");
+                        //    //                    return RedirectToAction("Upload", new { State = "Fails" });
 
-                                        else if (model.File.FileName.Contains("plantilla_cargue_actualizar.xlsx"))
-                                        {
-                                            TempData["ErrorMensaje"] = null;
-                                            TempData["ErrorMensaje"] = string.Format($"ERROR: La plantilla seleccionada para cargar {model.File.FileName} no es la correcta, Si esta intentado actualizar selecione la casilla Actualizar Registros ");
-                                            return RedirectToAction("Upload", new { State = "Fails" });
+                        //    //                }
 
-                                        }
-                                        else
-                                        {
-                                            //List add
-                                            listPrductoImagen.Add(new VitroSql.MassiveProductImages()
-                                            {
-                                                Nombre = filename,
-                                                Sap = temp.SAP,
-                                                Extension = extension,
-                                                Contenido = Imgbytes,
-                                                Posicion = IndiceImagen,
-                                                ProductoId = "",
-                                                ImagenId = ImagenId
-                                            });
-                                        }
+                        //    //                productImages.Add(new VitroSql.ProductImages()
+                        //    //                {
+                        //    //                    Nombre = filename,
+                        //    //                    Sap = temp.SAP,
+                        //    //                    Extension = extension,
+                        //    //                    Contenido = Imgbytes,
+                        //    //                    Posicion = IndiceImagen,
+                        //    //                    ProductId = ""
+                        //    //                });
+                        //    //            }
 
-                                        IndiceImagen++;
-                                    }
-                                    catch (Exception error)
-                                    {
-                                        string root = Path.GetFullPath(model.Recursos);
-                                        var filename = string.IsNullOrEmpty(rows[column].ToString()) ? $"{DateTime.Now.Year}{DateTime.Now.Month}{DateTime.Now.Day}__{rows[0].ToString()}" : $"{DateTime.Now.Year}{DateTime.Now.Month}{DateTime.Now.Day}__{rows[column].ToString()}";
-                                        Image image = Image.FromFile(Path.Combine(root, "default.jpg"));
-                                        image.Save(Path.Combine(Server.MapPath("~/Resources/Uploads/"), filename));
-                                        temp.RefImagen = filename;
-                                        imagenes.Add(filename);
-                                        System.Diagnostics.Debug.WriteLine($"ERROR: {error.Message}");
-                                    }
-                                }
+                        //    //            else if (model.File.FileName.Contains("plantilla_cargue_actualizar.xlsx"))
+                        //    //            {
+                        //    //                TempData["ErrorMensaje"] = null;
+                        //    //                TempData["ErrorMensaje"] = string.Format($"ERROR: La plantilla seleccionada para cargar {model.File.FileName} no es la correcta, Si esta intentado actualizar selecione la casilla Actualizar Registros ");
+                        //    //                return RedirectToAction("Upload", new { State = "Fails" });
 
-                            }
-                        }
+                        //    //            }
+                        //    //            else
+                        //    //            {
+                        //    //                //List add
+                        //    //                productImages.Add(new VitroSql.ProductImages()
+                        //    //                {
+                        //    //                    Nombre = filename,
+                        //    //                    Sap = temp.SAP,
+                        //    //                    Extension = extension,
+                        //    //                    Contenido = Imgbytes,
+                        //    //                    Posicion = IndiceImagen,
+                        //    //                    ProductId = ""
+
+                        //    //                });
+                        //    //            }
+
+                        //    //            IndiceImagen++;
+                        //    //        }
+                        //    //        catch (Exception error)
+                        //    //        {
+                        //    //            string root = Path.GetFullPath(model.Recursos);
+                        //    //            var filename = string.IsNullOrEmpty(rows[column].ToString()) ? $"{DateTime.Now.Year}{DateTime.Now.Month}{DateTime.Now.Day}__{rows[0].ToString()}" : $"{DateTime.Now.Year}{DateTime.Now.Month}{DateTime.Now.Day}__{rows[column].ToString()}";
+                        //    //            Image image = Image.FromFile(Path.Combine(root, "default.jpg"));
+                        //    //            image.Save(Path.Combine(Server.MapPath("~/Resources/Uploads/"), filename));
+                        //    //            temp.RefImagen = filename;
+                        //    //            imagenes.Add(filename);
+                        //    //            System.Diagnostics.Debug.WriteLine($"ERROR: {error.Message}");
+                        //    //        }
+                        //    //    }
+
+                        //    //}
+                        //    #endregion
+                        //}
                     }
                     if (temp.RefImagen == null)
                     {
@@ -740,82 +824,128 @@ namespace Vitro.Controllers
                     db.TemporalProductos.Add(temp);
                 }
                 db.SaveChanges();
-                db.Database.ExecuteSqlCommand("exec sp_cargue @PAIS, @USERNAME, @ACTUALIZAPRODUCTOS", new SqlParameter("@PAIS", "COLOMBIA"), new SqlParameter("@USERNAME", User.Identity.Name), new SqlParameter("@ACTUALIZAPRODUCTOS", model.Actualizar));
+                Errores = _processProductRepository.ProcesarProductos(table, listProductoImagen,"COLOMBIA", model.Actualizar, user.FullName);
+                
+                //db.Database.ExecuteSqlCommand("exec sp_cargue @PAIS, @USERNAME, @ACTUALIZAPRODUCTOS", new SqlParameter("@PAIS", "COLOMBIA"), new SqlParameter("@USERNAME", User.Identity.Name), new SqlParameter("@ACTUALIZAPRODUCTOS", model.Actualizar));
                 db.Database.CommandTimeout = 300;
             }
 
-            InsertorUpdateMaxImage(listPrductoImagen,model.Actualizar, model.File.FileName, table, reg_errors);
-            return reg_errors.Count > 0 ? RedirectToAction("Upload", new { State = "Upload" }) : RedirectToAction("Upload", new { State = "Upload" });
+            TempData["ProccessRowsCount"] = db.TemporalProductos.Count(x => x.Valido);
+            TempData["ErrorImageUploadsCount"] = Errores.Rows.Count;
+            TempData["ErrorImageUploads"] = reg_errors;
+            TempData["ProccessDataError"] = Errores;
+            TempData["ProccessSuccessCount"] = db.TemporalProductos.Count(x => x.Valido);
+            TempData["ProccessFailsCount"] = Errores.Rows.Count; //db.TemporalProductos.Count(x => !x.Valido);
+            InsertorUpdateMaxImage(productImages, model.Actualizar, model.File.FileName, table, Errores);
+            return Errores.Rows.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
+            //return reg_errors.Count > 0 ? RedirectToAction("Upload", new { State = "Upload" }) : RedirectToAction("Upload", new { State = "Upload" });
+            //return Errores.Rows.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
 
         }
 
-        public ActionResult InsertorUpdateMaxImage(List<MassiveProductImages> list, bool update,string fileName, DataTable table, List<VitroSql.TempProducto> reg_errors)
+        public  ActionResult InsertorUpdateMaxImage(List<ProductImages> list, bool update, string fileName, DataTable table, DataTable errors)
         {
+            int errorImageUploadsCount = 0;
+
             try
             {
-               
-                VitroSql.MassiveProductImages massiveProductImages = new VitroSql.MassiveProductImages();
-                List<VitroSql.MassiveProductImages> listMassiveProductImages = new List<VitroSql.MassiveProductImages>();
-                
-
-                foreach (var item in list)
+                foreach (DataRow row in table.Rows)
                 {
-                    var producto = db.Productos.Where(x => x.SAP == item.Sap).FirstOrDefault();
-                    var productImages = db.MassiveProductImages.Where(x => x.Sap == producto.SAP).FirstOrDefault();
-                    
-                    if (!update && fileName == "plantilla_cargue_inicial.xlsx")
-                    {
-                        if (productImages != null && productImages.FechaActualizacion != null)
-                        {
-                            TempData["ErrorMensaje"] = null;
-                            var sb = new System.Text.StringBuilder();
-                            sb.AppendLine(item.Sap.ToString());
-                            TempData["ErrorMensaje"] = string.Format($"ERROR: Esta intentando crear productos {sb} que ya existen");
-                            return reg_errors.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
-                        }
-                        else 
-                        {
-                            massiveProductImages.Nombre = item.Nombre;
-                            massiveProductImages.Sap = item.Sap;
-                            massiveProductImages.Extension = item.Extension;
-                            massiveProductImages.Contenido = item.Contenido;
-                            massiveProductImages.Posicion = item.Posicion;
-                            massiveProductImages.ProductoId = producto.ProductoId;
-                            massiveProductImages.ImagenId = item.ImagenId;
+                    var sap = row["SAP"].ToString();
+                    var product = db.TbProduct.FirstOrDefault(p => p.SAP == sap);
+                    if (product == null) continue;
 
-                            db.MassiveProductImages.Add(massiveProductImages);
-                            db.SaveChanges();
+                    int posicion = 1;
+
+                    foreach (DataColumn col in table.Columns)
+                    {
+                        if (col.ColumnName.ToLower().StartsWith("imagen"))
+                        {
+                            var valor = row[col].ToString().Trim();
+
+                            if (!string.IsNullOrWhiteSpace(valor) && Directory.Exists("C:\\imagenes_catalogo"))
+                            {
+                                string originalName = row[col].ToString();
+                                string extension = Path.GetExtension(originalName);
+                                string root = Path.GetFullPath("C:\\imagenes_catalogo");
+                                string sourceImagePath = Path.Combine(root, originalName);
+
+                                string filename = $"{sap}_img{posicion}{extension}";
+                                string destinationPath = Path.Combine(Server.MapPath("~/Resources/Uploads/"), filename);
+
+                                try
+                                {
+                                    Image image = Image.FromFile(sourceImagePath);
+                                    image.Save(destinationPath);
+
+                                    byte[] imageArray = System.IO.File.ReadAllBytes(destinationPath);
+                                    byte[] Imgbytes = imageArray;
+
+                                    Debug.WriteLine($"Procesando imagen: SAP={sap}, Posición={posicion}, Nombre={filename}");
+
+                                    // Verifica si ya existe una imagen en esa posición
+                                    var existingImage = db.ProductImages
+                                        .FirstOrDefault(img => img.ProductId == product.ProductId && img.Posicion == posicion);
+
+                                    if (existingImage != null)
+                                    {
+                                        // Actualiza imagen existente
+                                        existingImage.Nombre = filename;
+                                        existingImage.Contenido = Imgbytes;
+                                        existingImage.Extension = extension?.TrimStart('.');
+                                        existingImage.FechaActualizacion = DateTime.UtcNow;
+
+                                    }
+                                    else
+                                    {
+                                        // Inserta nueva imagen
+                                        db.ProductImages.Add(new ProductImages
+                                        {
+                                            ProductId = product.ProductId,
+                                            Sap = sap,
+                                            ImagenId = Guid.NewGuid(),
+                                            Nombre = filename,
+                                            Posicion = posicion,
+                                            Contenido = Imgbytes,
+                                            Extension = extension?.TrimStart('.'),
+                                            FechaCreacion = DateTime.UtcNow
+                                        });
+                                    }
+
+                                    posicion++;
+                                }
+                                catch (FileNotFoundException)
+                                {
+                                    errorImageUploadsCount++;
+                                    Debug.WriteLine($"Imagen no encontrada: {sourceImagePath}");
+                                    continue;
+                                }
+                                catch (Exception ex)
+                                {
+                                    errorImageUploadsCount++;
+                                    Debug.WriteLine($"Error al cargar imagen '{sourceImagePath}': {ex.Message}");
+                                    continue;
+                                }
+                            }
                         }
                     }
-                    else if (update && fileName == "plantilla_cargue_actualizar.xlsx")
-                    {
-                        massiveProductImages.FechaActualizacion = DateTime.UtcNow;
-                        massiveProductImages.Nombre = item.Nombre;
-                        massiveProductImages.Sap = item.Sap;
-                        massiveProductImages.Extension = item.Extension;
-                        massiveProductImages.Contenido = item.Contenido;
-                        massiveProductImages.Posicion = item.Posicion;
-                        massiveProductImages.ProductoId = producto.ProductoId;
-                        massiveProductImages.ImagenId = item.ImagenId;
-
-                        db.MassiveProductImages.Add(massiveProductImages);
-                        db.SaveChanges();
-                    }
-
                 }
-               
+
+                var resultado = db.SaveChanges();
+                Debug.WriteLine($"Cambios guardados en base de datos: {resultado}");
             }
             catch (Exception error)
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR: {error.Message}");
+                Debug.WriteLine($"ERROR general: {error.Message}");
             }
 
             TempData["ProccessRowsCount"] = table.Rows.Count;
-            TempData["ErrorImageUploadsCount"] = reg_errors.Count;
-            TempData["ErrorImageUploads"] = reg_errors;
-            TempData["ProccessSuccessCount"] = db.TemporalProductos.Count(x => x.Procesado); //db.TemporalProductos.Count(x => x.Valido);
-            TempData["ProccessFailsCount"] = reg_errors.Count;//db.TemporalProductos.Count(x => !x.Valido);
-            return reg_errors.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
+            TempData["ErrorImageUploadsCount"] = errorImageUploadsCount;
+            //TempData["ErrorImageUploads"] = errors;
+            //TempData["ProccessSuccessCount"] = db.TemporalProductos.Count(x => x.Procesado); //db.TemporalProductos.Count(x => x.Valido);
+            TempData["ProccessDataError"] = errors;
+            TempData["ProccessFailsCount"] = errors.Rows.Count;//db.TemporalProductos.Count(x => !x.Valido);
+            return errors.Rows.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
 
         }
 

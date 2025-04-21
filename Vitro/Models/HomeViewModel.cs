@@ -7,7 +7,8 @@ namespace Vitro.Models
 {
     public class HomeViewModel
     {
-        public IEnumerable<VitroSql.Producto> ProductosNuevos { get; set; }
+        //public IEnumerable<VitroSql.Producto> ProductosNuevos { get; set; }
+        public IEnumerable<VitroSql.TbProduct> ProductosNuevos { get; set; }
         public IEnumerable<VitroSql.ProductoPromocion> ProductosPromocion { get; set; }
     }
 }

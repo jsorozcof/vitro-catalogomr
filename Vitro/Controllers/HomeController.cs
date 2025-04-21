@@ -14,8 +14,8 @@ namespace Vitro.Controllers
         public ActionResult Index()
         {
             DateTime FechaFinal = DateTime.Now.AddDays(-db.Configuraciones.FirstOrDefault().DiasVigenciaNuevosProductos);
-            var productos = db.Productos.Include(x => x.Modelo).Include(x => x.Modelo.Marca).Where(x => x.FechaCreacion > FechaFinal).OrderBy(x => x.Modelo.Marca.Nombre).ThenBy(x => x.Modelo.Nombre).ToList();
-            var promociones = db.ProductoPromociones.Include(x => x.Producto).Include(x => x.Producto.Modelo.Marca).Include(x => x.Producto.Modelo).Where(x => x.FechaFinal >= DateTime.Today).OrderByDescending(x => x.FechaInicio).ToList();
+            var productos = db.TbProduct.Include(x => x.Modelo).Include(x => x.Modelo.Marca).Where(x => x.FechaCreacion > FechaFinal).OrderBy(x => x.Modelo.Marca.Nombre).ThenBy(x => x.Modelo.Nombre).ToList();
+            var promociones = db.ProductoPromociones.Include(x => x.Product).Include(x => x.Product.Modelo.Marca).Include(x => x.Product.Modelo).Where(x => x.FechaFinal >= DateTime.Today).OrderByDescending(x => x.FechaInicio).ToList();
 
             var model = new Models.HomeViewModel()
             {

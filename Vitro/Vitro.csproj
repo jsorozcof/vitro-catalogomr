@@ -215,11 +215,13 @@
     <Compile Include="Models\AccountJson.cs" />
     <Compile Include="Models\ConfiguracionViewModel.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
+    <Compile Include="Models\LogErrorCargaViewModel.cs" />
     <Compile Include="Models\MailConfigViewModel.cs" />
     <Compile Include="Models\MailDataViewModel.cs" />
     <Compile Include="Models\MailViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MassiveProductImagesViewModel.cs" />
+    <Compile Include="Models\ProductImageDto.cs" />
     <Compile Include="Models\ProfileViewModel.cs" />
     <Compile Include="Models\PromocionesViewModel.cs" />
     <Compile Include="Models\UploadViewModel.cs" />

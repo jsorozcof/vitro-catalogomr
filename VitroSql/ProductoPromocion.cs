@@ -13,12 +13,14 @@ namespace VitroSql
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFinal { get; set; }
         public int DiasVigencia { get; set; }
-        public string ProductoId { get; set; }
+        //public string ProductoId { get; set; }
+        public string ProductId { get; set; }
         public double Precio { get; set; }
         public int Stock { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }
 
-        public Producto Producto { get; set; }
+        //public Producto Producto { get; set; }
+        public TbProduct Product { get; set; }
     }
 }

@@ -21,7 +21,7 @@
                                             <table class="table striped compact" name="tblnv">
                                                 <tr style="background-color: #005776">
                                                     <th colspan="2">
-                                                        <a href="@Url.Action("Details","Search",new { id=producto.ProductoId })" class="fg-white text-light">@producto.Descripcion</a>
+                                                        <a href="@Url.Action("Details","Search",new { id=producto.ProductId })" class="fg-white text-light">@producto.Descripcion</a>
                                                     </th>
                                                 </tr>
                                                 <tr>
@@ -53,7 +53,7 @@
                                                     <td name="tddescr">@producto.Descripcion</td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="2"><a href="@Url.Action("Details","Search",new { id=producto.ProductoId })" class="button fg-white small" name="btnnvdet" style="background-color: #0057b8">DETALLES</a></td>
+                                                    <td colspan="2"><a href="@Url.Action("Details","Search",new { id=producto.ProductId })" class="button fg-white small" name="btnnvdet" style="background-color: #0057b8">DETALLES</a></td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -70,37 +70,37 @@
             <div class="cell-12">
                 <h2>PRODUCTOS EN PROMOCION</h2>
                 <div data-role="accordion" data-show-active="true" data-one-frame="false" data-active-heading-class="bg-site fg-white" data-on-frame-open="displayPortView(arguments[0])">
-                    @foreach (var marca in Model.ProductosPromocion.Select(x => x.Producto.Modelo.Marca).Distinct())
+                    @foreach (var marca in Model.ProductosPromocion.Select(x => x.Product.Modelo.Marca).Distinct())
                     {
                         <div class="frame">
                             <div class="heading">@marca.Nombre</div>
                             <div class="content">
                                 <div class="row">
-                                    @foreach (var promocion in Model.ProductosPromocion.Where(x => x.Producto.Modelo.MarcaId.Equals(marca.MarcaId) && x.Stock > 0).OrderBy(x => x.Producto.Modelo.Nombre).ThenBy(x => x.Producto.StartYear))
+                                    @foreach (var promocion in Model.ProductosPromocion.Where(x => x.Product.Modelo.MarcaId.Equals(marca.MarcaId) && x.Stock > 0).OrderBy(x => x.Product.Modelo.Nombre).ThenBy(x => x.Product.StartYear))
                                     {
                                         <div class="cell-4">
                                             <table class="table striped compact" name="tblnv">
                                                 <tr class="bg-green">
                                                     <th colspan="2">
-                                                        <a href="@Url.Action("Details","Search",new { id=promocion.Producto.ProductoId })" class="fg-white text-light">@promocion.Producto.Descripcion</a>
+                                                        <a href="@Url.Action("Details","Search",new { id=promocion.Product.ProductId })" class="fg-white text-light">@promocion.Product.Descripcion</a>
                                                         <div class="fg-white text-light size-1" style="font-size: 12px;">VALIDA DESDE @promocion.FechaInicio.ToString("dd/MM/yyyy") HASTA @promocion.FechaFinal.ToString("dd/MM/yyyy")</div>
                                                     </th>
                                                 </tr>
                                                 <tr>
                                                     <th>SAP</th>
-                                                    <td>@promocion.Producto.SAP</td>
+                                                    <td>@promocion.Product.SAP</td>
                                                 </tr>
                                                 <tr>
                                                     <th>NAGS</th>
-                                                    <td>@promocion.Producto.NAGS</td>
+                                                    <td>@promocion.Product.NAGS</td>
                                                 </tr>
                                                 <tr>
                                                     <th>MARCA</th>
-                                                    <td>@promocion.Producto.Modelo.Marca.Nombre</td>
+                                                    <td>@promocion.Product.Modelo.Marca.Nombre</td>
                                                 </tr>
                                                 <tr>
                                                     <th>MODELO</th>
-                                                    <td>@promocion.Producto.Modelo.Nombre</td>
+                                                    <td>@promocion.Product.Modelo.Nombre</td>
                                                 </tr>
                                                 <tr>
                                                     <th>PRECIO</th>
@@ -112,18 +112,18 @@
                                                 </tr>
                                                 <tr>
                                                     <th>AÑO INICIAL</th>
-                                                    <td>@promocion.Producto.StartYear</td>
+                                                    <td>@promocion.Product.StartYear</td>
                                                 </tr>
                                                 <tr>
                                                     <th>AÑO FINAL</th>
-                                                    <td>@promocion.Producto.EndYear</td>
+                                                    <td>@promocion.Product.EndYear</td>
                                                 </tr>
                                                 <tr>
                                                     <th style="vertical-align:middle;">DESCRIPCION</th>
-                                                    <td name="tddescr">@promocion.Producto.Descripcion</td>
+                                                    <td name="tddescr">@promocion.Product.Descripcion</td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="2"><a href="@Url.Action("Details","Search",new { id=promocion.Producto.ProductoId })" class="button fg-white small" name="btnnvdet" style="background-color: #0057b8">DETALLES</a></td>
+                                                    <td colspan="2"><a href="@Url.Action("Details","Search",new { id=promocion.Product.ProductId })" class="button fg-white small" name="btnnvdet" style="background-color: #0057b8">DETALLES</a></td>
                                                 </tr>
                                             </table>
                                         </div>

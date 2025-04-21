@@ -1,0 +1,139 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "F:\\Repos\\vitro-catalogomr\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{29E07C58-95CD-4A6E-9FBA-6963E42D6420}|Vitro\\Vitro.csproj|F:\\Repos\\vitro-catalogomr\\vitro\\controllers\\productocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{29E07C58-95CD-4A6E-9FBA-6963E42D6420}|Vitro\\Vitro.csproj|solutionrelative:vitro\\controllers\\productocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B451C917-433E-46FF-B45F-5E47D93BA52B}|VitroSql\\VitroSql.csproj|f:\\repos\\vitro-catalogomr\\vitrosql\\massiveproductimages.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B451C917-433E-46FF-B45F-5E47D93BA52B}|VitroSql\\VitroSql.csproj|solutionrelative:vitrosql\\massiveproductimages.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{29E07C58-95CD-4A6E-9FBA-6963E42D6420}|Vitro\\Vitro.csproj|f:\\repos\\vitro-catalogomr\\vitro\\controllers\\searchcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{29E07C58-95CD-4A6E-9FBA-6963E42D6420}|Vitro\\Vitro.csproj|solutionrelative:vitro\\controllers\\searchcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{29E07C58-95CD-4A6E-9FBA-6963E42D6420}|Vitro\\Vitro.csproj|F:\\Repos\\vitro-catalogomr\\vitro\\views\\search\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{29E07C58-95CD-4A6E-9FBA-6963E42D6420}|Vitro\\Vitro.csproj|solutionrelative:vitro\\views\\search\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{29E07C58-95CD-4A6E-9FBA-6963E42D6420}|Vitro\\Vitro.csproj|F:\\Repos\\vitro-catalogomr\\vitro\\models\\detailsproductoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{29E07C58-95CD-4A6E-9FBA-6963E42D6420}|Vitro\\Vitro.csproj|solutionrelative:vitro\\models\\detailsproductoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CA8D5CAB-D801-447D-B827-9E2FDDBF8D74}|VitroCore\\VitroCore.csproj|F:\\Repos\\vitro-catalogomr\\vitrocore\\services\\processproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CA8D5CAB-D801-447D-B827-9E2FDDBF8D74}|VitroCore\\VitroCore.csproj|solutionrelative:vitrocore\\services\\processproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{29E07C58-95CD-4A6E-9FBA-6963E42D6420}|Vitro\\Vitro.csproj|F:\\Repos\\vitro-catalogomr\\vitro\\views\\producto\\upload.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{29E07C58-95CD-4A6E-9FBA-6963E42D6420}|Vitro\\Vitro.csproj|solutionrelative:vitro\\views\\producto\\upload.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MassiveProductImages.cs",
+              "DocumentMoniker": "F:\\Repos\\vitro-catalogomr\\VitroSql\\MassiveProductImages.cs",
+              "RelativeDocumentMoniker": "VitroSql\\MassiveProductImages.cs",
+              "ToolTip": "F:\\Repos\\vitro-catalogomr\\VitroSql\\MassiveProductImages.cs",
+              "RelativeToolTip": "VitroSql\\MassiveProductImages.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T17:06:04.021Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{58d054c4-d113-4446-be66-a2f783515f53}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DetailsProductoViewModel.cs",
+              "DocumentMoniker": "F:\\Repos\\vitro-catalogomr\\Vitro\\Models\\DetailsProductoViewModel.cs",
+              "RelativeDocumentMoniker": "Vitro\\Models\\DetailsProductoViewModel.cs",
+              "ToolTip": "F:\\Repos\\vitro-catalogomr\\Vitro\\Models\\DetailsProductoViewModel.cs",
+              "RelativeToolTip": "Vitro\\Models\\DetailsProductoViewModel.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAgwBAAAAAuAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-13T20:07:32.729Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SearchController.cs",
+              "DocumentMoniker": "F:\\Repos\\vitro-catalogomr\\Vitro\\Controllers\\SearchController.cs",
+              "RelativeDocumentMoniker": "Vitro\\Controllers\\SearchController.cs",
+              "ToolTip": "F:\\Repos\\vitro-catalogomr\\Vitro\\Controllers\\SearchController.cs",
+              "RelativeToolTip": "Vitro\\Controllers\\SearchController.cs",
+              "ViewState": "AQIAAHIAAAAAAAAAAAAmwHoAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-13T17:09:54.972Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ProductoController.cs",
+              "DocumentMoniker": "F:\\Repos\\vitro-catalogomr\\Vitro\\Controllers\\ProductoController.cs",
+              "RelativeDocumentMoniker": "Vitro\\Controllers\\ProductoController.cs",
+              "ToolTip": "F:\\Repos\\vitro-catalogomr\\Vitro\\Controllers\\ProductoController.cs",
+              "RelativeToolTip": "Vitro\\Controllers\\ProductoController.cs",
+              "ViewState": "AQIAAH0DAAAAAAAAAAAAAIUDAABOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-25T13:59:22.408Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ProcessProductRepository.cs",
+              "DocumentMoniker": "F:\\Repos\\vitro-catalogomr\\VitroCore\\Services\\ProcessProductRepository.cs",
+              "RelativeDocumentMoniker": "VitroCore\\Services\\ProcessProductRepository.cs",
+              "ToolTip": "F:\\Repos\\vitro-catalogomr\\VitroCore\\Services\\ProcessProductRepository.cs",
+              "RelativeToolTip": "VitroCore\\Services\\ProcessProductRepository.cs",
+              "ViewState": "AQIAABUAAAAAAAAAAAAEwCMAAAA1AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-10T02:11:18.339Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "F:\\Repos\\vitro-catalogomr\\Vitro\\Views\\Search\\Details.cshtml",
+              "RelativeDocumentMoniker": "Vitro\\Views\\Search\\Details.cshtml",
+              "ToolTip": "F:\\Repos\\vitro-catalogomr\\Vitro\\Views\\Search\\Details.cshtml",
+              "RelativeToolTip": "Vitro\\Views\\Search\\Details.cshtml",
+              "ViewState": "AQIAAHsAAAAAAAAAAAAYwIcAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-09T22:34:02.101Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Upload.cshtml",
+              "DocumentMoniker": "F:\\Repos\\vitro-catalogomr\\Vitro\\Views\\Producto\\Upload.cshtml",
+              "RelativeDocumentMoniker": "Vitro\\Views\\Producto\\Upload.cshtml",
+              "ToolTip": "F:\\Repos\\vitro-catalogomr\\Vitro\\Views\\Producto\\Upload.cshtml",
+              "RelativeToolTip": "Vitro\\Views\\Producto\\Upload.cshtml",
+              "ViewState": "AQIAAEoAAAAAAAAAAAAAAFoAAABOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-03-25T13:59:18.725Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
