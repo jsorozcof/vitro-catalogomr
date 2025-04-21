@@ -55,7 +55,7 @@ truncate table dbO.LogErroresSistema
 select * from dbo.TempProducto
 select * from dbo.Product
 SELECT *
-  FROM [catalogomr].[dbo].[ProductImages]
+  FROM [catalogomr].[dbo].[ProductImages]	where SAP = '2000120400'
   where SAP = '2000099932' ORDER BY Posicion asc
 select * from LogErroresSistema
 								  

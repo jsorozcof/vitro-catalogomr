@@ -75,8 +75,11 @@ namespace Vitro.Models
         public IEnumerable<VitroSql.TipoParte> TipoParteList { get; set; }
         public IEnumerable<VitroSql.Procedencia> ProcedenciaList { get; set; }
         public IEnumerable<VitroSql.Producto> Productos { get; set; }
+        public IEnumerable<VitroSql.TbProduct> TbProduct { get; set; }
         public IEnumerable<VitroSql.Producto> ProdcutosCount { get; set; }
+        public IEnumerable<VitroSql.TbProduct> TbProductsCount { get; set; }
         public IEnumerable<VitroSql.Marca> Marcas { get; set; }
         public IEnumerable<VitroSql.ProductoImagen> ProductoImagenes { get; set; }
+        public IEnumerable<VitroSql.ProductImages> ProductImages { get; set; }
     }
 }

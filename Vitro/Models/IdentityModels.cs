@@ -42,6 +42,7 @@ namespace Vitro.Models
         public DbSet<VitroSql.Pais> Paises { get; set; }
         public DbSet<VitroSql.Producto> Productos { get; set; }
         public DbSet<VitroSql.TbProduct> TbProduct { get; set; }
+        public DbSet<VitroSql.TbLogErrores> TbLogErrores { get; set; }
         public DbSet<VitroSql.TipoParte> TipoPartes { get; set; }
         public DbSet<VitroSql.TipoVidrio> TipoVidrios { get; set; }
         public DbSet<VitroSql.Color> Colores { get; set; }

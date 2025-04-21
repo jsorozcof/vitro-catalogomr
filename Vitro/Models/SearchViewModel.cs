@@ -18,8 +18,11 @@ namespace Vitro.Models
         public SugerenciaViewModel SugerenciaViewModel { get; set; }
 
         public IEnumerable<VitroSql.Producto> Productos { get; set; }
+        public IEnumerable<VitroSql.TbProduct> TbProduct { get; set; }
         public IEnumerable<VitroSql.Producto> Homologos { get; set; }
+        public IEnumerable<VitroSql.TbProduct> TbHomologos { get; set; }
         public IEnumerable<VitroSql.Marca> Marcas { get; set; }
         public IEnumerable<VitroSql.ProductoImagen> ProductoImagenes { get; set; }
+        public IEnumerable<VitroSql.ProductImages> ProductImages { get; set; }
     }
 }

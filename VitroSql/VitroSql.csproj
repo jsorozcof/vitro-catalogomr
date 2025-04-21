@@ -55,6 +55,7 @@
     <Compile Include="HistoricoCargue.cs" />
     <Compile Include="Imagen.cs" />
     <Compile Include="ImagenCargue.cs" />
+    <Compile Include="LogErrores.cs" />
     <Compile Include="LogUserAccount.cs" />
     <Compile Include="MailConfig.cs" />
     <Compile Include="Marca.cs" />

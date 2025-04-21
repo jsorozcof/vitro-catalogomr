@@ -129,14 +129,14 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Productos != null && Model.Productos.Count() > 0)
+                @if (Model.TbProduct != null && Model.TbProduct.Count() > 0)
                 {
-                    foreach (var producto in Model.Productos)
+                    foreach (var producto in Model.TbProduct)
                     {
                         <tr>
-                            <td><img src="~/Resources/Uploads/@Model.ProductoImagenes.Where(x=>x.ProductoId.Equals(producto.ProductoId)).OrderBy(x=>x.Imagen.Indice).FirstOrDefault().Imagen.Nombre" width="150" height="150" /></td>
-                            <td><a href="@Url.Action("Details","Search",new { id=producto.ProductoId })">@producto.SAP</a></td>
-                            <td><a href="@Url.Action("Details","Search",new { id=producto.ProductoId })">@producto.NAGS</a></td>
+                            <td><img src="~/Resources/Uploads/@Model.ProductImages.Where(x=>x.ProductId.Equals(producto.ProductId)).OrderBy(x=>x.Posicion).FirstOrDefault().Nombre" width="150" height="150" /></td>
+                            <td><a href="@Url.Action("Details","Search",new { id=producto.ProductId })">@producto.SAP</a></td>
+                            <td><a href="@Url.Action("Details","Search",new { id=producto.ProductId })">@producto.NAGS</a></td>
                             <td>@producto.Modelo.Marca.Nombre</td>
                             <td>@producto.Modelo.Nombre</td>
                             <td>@producto.TipoParte.Clasificacion.Nombre</td>
@@ -149,7 +149,7 @@
                                 { <span>NO</span>}
                             </td>
                             <td>
-                                @if (producto.Antena)
+                                @if (producto.Antena == true)
                                 {
                                     <span>SI</span>
                                 }

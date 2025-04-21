@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using Vitro.Models;
 using VitroSql;
+using Org.BouncyCastle.Crypto;
 
 namespace Vitro.Controllers
 {
@@ -42,34 +43,64 @@ namespace Vitro.Controllers
                 case "SearchViewModel":
                     if (model.Parametro.Equals("SAP"))
                     {
-                        model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
-                            .Where(x => parametros.Contains(x.SAP) && x.Activo)
-                            .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
-                        model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+                        //model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
+                        //    .Where(x => parametros.Contains(x.SAP) && x.Activo)
+                        //    .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        //model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+
+                        model.TbProduct = db.TbProduct.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
+                                .Where(x => parametros.Contains(x.SAP) && x.Activo)
+                                .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        model.ProductImages = db.ProductImages.Where(x => x.Sap == model.Busqueda).ToArray();
+
                     }
                     else
                     {
-                        model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
-                            .Where(x => parametros.Contains(x.NAGS) && x.Activo)
-                            .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
-                        model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+                        //model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
+                        //    .Where(x => parametros.Contains(x.NAGS) && x.Activo)
+                        //    .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        //model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+                        model.TbProduct = db.TbProduct.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
+                          .Where(x => parametros.Contains(x.NAGS) && x.Activo)
+                          .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+
+                        //var productIds = model.TbProduct.Select(p => p.ProductId).ToList();
+
+                        //model.ProductImages = db.ProductImages
+                        //    .Where(x => productIds.Contains(x.ProductId))
+                        //    .OrderBy(x => x.Posicion)
+                        //    .ToArray();
+                        var ids = model.TbProduct.Select(p => p.ProductId).ToList();
+                        model.ProductImages = db.ProductImages
+                            .Where(x => ids.Contains(x.ProductId))
+                            .OrderBy(x => x.Posicion)
+                            .ToArray();
                     }
                     break;
                 case "SearchViewModel2":
                     int year = int.Parse(model.Year ?? "0");
                     if (year > 0)
                     {
-                        model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
-                            .Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && year >= x.StartYear && year <= x.EndYear && x.Activo)
-                            .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
-                        model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+                        //model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
+                        //    .Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && year >= x.StartYear && year <= x.EndYear && x.Activo)
+                        //    .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        //model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+
+                        model.TbProduct = db.TbProduct.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
+                           .Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && year >= x.StartYear && year <= x.EndYear && x.Activo)
+                           .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        model.ProductImages = db.ProductImages.Where(x => x.Sap == model.Busqueda).ToArray();
                     }
                     else
                     {
-                        model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
-                            .Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && x.Activo)
-                            .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
-                        model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+                        //model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
+                        //    .Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && x.Activo)
+                        //    .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        //model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+                        model.TbProduct = db.TbProduct.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
+                         .Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && x.Activo)
+                         .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        model.ProductImages = db.ProductImages.Where(x => x.Sap == model.Busqueda).ToArray();
                     }
                     break;
             }
@@ -77,13 +108,13 @@ namespace Vitro.Controllers
             model.Marcas = db.Marcas.Where(x => x.PaisId.Equals(user.PaisId ?? string.Empty) && x.Activo).OrderBy(x => x.Nombre).ToArray();
             if (User.IsInRole("Cliente"))
             {
-                model.Productos = model.Productos.Where(x => x.Modelo.Marca.Pais.PaisId.Equals(user.PaisId ?? string.Empty));
+                model.TbProduct = model.TbProduct.Where(x => x.Modelo.Marca.Pais.PaisId.Equals(user.PaisId ?? string.Empty));
             }
 
-            if (model.Productos.Count() == 1)
+            if (model.TbProduct.Count() == 1)
             {
-                var producto = model.Productos.FirstOrDefault();
-                model.Homologos = db.Productos.Where(x => x.NAGS.Contains(producto.NAGS) && !x.ProductoId.Equals(producto.ProductoId)).ToList();
+                var producto = model.TbProduct.FirstOrDefault();
+                model.TbHomologos = db.TbProduct.Where(x => x.NAGS.Contains(producto.NAGS) && !x.ProductId.Equals(producto.ProductId)).ToList();
             }
             return View("Index", model);
         }

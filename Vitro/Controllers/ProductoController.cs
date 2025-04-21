@@ -51,39 +51,41 @@ namespace Vitro.Controllers
                 case "ProductoViewModel":
                     if (model.Parametro.Equals("SAP"))
                     {
-                        model.Productos = db.Productos.Include(x => x.Color).Include(x => x.Modelo.Marca).Include(x => x.Mercado).Include(x => x.Modelo).Include(x => x.Modelo.Marca.Pais).Include(x => x.TipoParte).Include(x => x.TipoParte.Clasificacion).Include(x => x.Procedencia).Include(x => x.TipoVidrio).Where(x => x.SAP.Contains(model.Busqueda) && x.Activo).OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
-                        model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+                        model.TbProduct = db.TbProduct.Include(x => x.Color).Include(x => x.Modelo.Marca).Include(x => x.Mercado).Include(x => x.Modelo).Include(x => x.Modelo.Marca.Pais).Include(x => x.TipoParte).Include(x => x.TipoParte.Clasificacion).Include(x => x.Procedencia).Include(x => x.TipoVidrio).Where(x => x.SAP.Contains(model.Busqueda) && x.Activo).OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        model.ProductImages = db.ProductImages.Where(x => x.Sap == model.Busqueda).ToArray();
+                        //model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
                     }
                     else
                     {
-                        model.Productos = db.Productos.Include(x => x.Color).Include(x => x.Modelo.Marca).Include(x => x.Mercado).Include(x => x.Modelo).Include(x => x.Modelo.Marca.Pais).Include(x => x.TipoParte).Include(x => x.TipoParte.Clasificacion).Include(x => x.Procedencia).Include(x => x.TipoVidrio).Where(x => x.NAGS.Contains(model.Busqueda) && x.Activo).OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
-                        model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+                        model.TbProduct = db.TbProduct.Include(x => x.Color).Include(x => x.Modelo.Marca).Include(x => x.Mercado).Include(x => x.Modelo).Include(x => x.Modelo.Marca.Pais).Include(x => x.TipoParte).Include(x => x.TipoParte.Clasificacion).Include(x => x.Procedencia).Include(x => x.TipoVidrio).Where(x => x.NAGS.Contains(model.Busqueda) && x.Activo).OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        model.ProductImages = db.ProductImages.Where(x => x.Sap == model.Busqueda).ToArray();
                     }
                     break;
                 case "ProductoViewModel2":
                     int year = int.Parse(model.Year ?? "0");
                     if (year > 0)
                     {
-                        model.Productos = db.Productos.Include(x => x.Color).Include(x => x.Modelo.Marca).Include(x => x.Mercado).Include(x => x.Modelo).Include(x => x.Modelo.Marca.Pais).Include(x => x.TipoParte).Include(x => x.TipoParte.Clasificacion).Include(x => x.Procedencia).Include(x => x.TipoVidrio).Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && year >= x.StartYear && year <= x.EndYear && x.Activo).OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        model.TbProduct = db.TbProduct.Include(x => x.Color).Include(x => x.Modelo.Marca).Include(x => x.Mercado).Include(x => x.Modelo).Include(x => x.Modelo.Marca.Pais).Include(x => x.TipoParte).Include(x => x.TipoParte.Clasificacion).Include(x => x.Procedencia).Include(x => x.TipoVidrio).Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && year >= x.StartYear && year <= x.EndYear && x.Activo).OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
                         //model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion).Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && year >= x.StartYear && year <= x.EndYear && x.Activo).OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
-                        model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+                        model.ProductImages = db.ProductImages.Where(x => x.Sap == model.Busqueda).ToArray();
                     }
                     else
                     {
-                        model.Productos = db.Productos.Include(x => x.Color).Include(x => x.Modelo.Marca).Include(x => x.Mercado).Include(x => x.Modelo).Include(x => x.Modelo.Marca.Pais).Include(x => x.TipoParte).Include(x => x.TipoParte.Clasificacion).Include(x => x.Procedencia).Include(x => x.TipoVidrio).Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && x.Activo).OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        model.TbProduct = db.TbProduct.Include(x => x.Color).Include(x => x.Modelo.Marca).Include(x => x.Mercado).Include(x => x.Modelo).Include(x => x.Modelo.Marca.Pais).Include(x => x.TipoParte).Include(x => x.TipoParte.Clasificacion).Include(x => x.Procedencia).Include(x => x.TipoVidrio).Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && x.Activo).OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
                         //model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion).Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && x.Activo).OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
-                        model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
+                        model.ProductImages = db.ProductImages.Where(x => x.Sap == model.Busqueda).ToArray();
                     }
                     break;
             }
             var user = db.Users.Include(x => x.Pais).Where(x => x.UserName.Equals(User.Identity.Name)).FirstOrDefault();
             model.Marcas = db.Marcas.Where(x => x.PaisId.Equals(user.PaisId ?? string.Empty) && x.Activo).OrderBy(x => x.Nombre).ToArray();
-            model.TotalProductos = db.Productos.Where(x => x.Modelo.Marca.Pais.PaisId.Equals(user.PaisId) && x.Activo).Count();
-            model.TotalproductIMG = (from PD in db.Productos
-                                     join PI in db.ProductoImagenes on PD.ProductoId equals PI.ProductoId
-                                     join IMG in db.Imagenes on PI.ImagenId equals IMG.ImagenId
-                                     where IMG.Nombre.Contains("default")
-                                     select new { PD.ProductoId }).Count();
+            model.TotalProductos = db.TbProduct.Where(x => x.Modelo.Marca.Pais.PaisId.Equals(user.PaisId) && x.Activo).Count();
+            model.TotalproductIMG = (from PD in db.TbProduct
+                                     join PI in db.ProductImages on PD.ProductId equals PI.ProductId
+                                     //join IMG in db.pro on PI.ImagenId equals IMG.ImagenId
+                                     //where PI.Nombre.Contains("default")
+                                     where PI.Nombre.Contains("img1")
+                                     select new { PD.ProductId }).Count();
             return View("Index", model);
         }
 
@@ -556,13 +558,14 @@ namespace Vitro.Controllers
 
             List<VitroSql.TempProducto> reg_errors = new List<VitroSql.TempProducto>();
             DataTable Errores = new DataTable();
+           
             List<string> imagenes = new List<string>();
             var listProductoImagen = new List<ProductImages>();
             var productImages = new List<ProductImages>();
+            var user = db.Users.Include(x => x.Pais).Where(x => x.UserName.Equals(User.Identity.Name)).FirstOrDefault();
 
             if (table.Rows.Count <= 1000)
             {
-                var user = db.Users.Include(x => x.Pais).Where(x => x.UserName.Equals(User.Identity.Name)).FirstOrDefault();
                 foreach (DataRow rows in table.Rows)
                 {
                     VitroSql.TempProducto temp = new VitroSql.TempProducto();
@@ -836,14 +839,14 @@ namespace Vitro.Controllers
             TempData["ProccessDataError"] = Errores;
             TempData["ProccessSuccessCount"] = db.TemporalProductos.Count(x => x.Valido);
             TempData["ProccessFailsCount"] = Errores.Rows.Count; //db.TemporalProductos.Count(x => !x.Valido);
-            InsertorUpdateMaxImage(productImages, model.Actualizar, model.File.FileName, table, Errores);
+            InsertorUpdateMaxImage(productImages, model.Actualizar, model.File.FileName, table, Errores, user.FullName);
             return Errores.Rows.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
             //return reg_errors.Count > 0 ? RedirectToAction("Upload", new { State = "Upload" }) : RedirectToAction("Upload", new { State = "Upload" });
             //return Errores.Rows.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
 
         }
 
-        public  ActionResult InsertorUpdateMaxImage(List<ProductImages> list, bool update, string fileName, DataTable table, DataTable errors)
+        public  ActionResult InsertorUpdateMaxImage(List<ProductImages> list, bool update, string fileName, DataTable table, DataTable errors, string user)
         {
             int errorImageUploadsCount = 0;
 
@@ -914,16 +917,46 @@ namespace Vitro.Controllers
 
                                     posicion++;
                                 }
-                                catch (FileNotFoundException)
+                                catch (FileNotFoundException exc)
                                 {
                                     errorImageUploadsCount++;
-                                    Debug.WriteLine($"Imagen no encontrada: {sourceImagePath}");
+                                    var log = new TbLogErrores
+                                    {
+                                        Usuario = user,
+                                        Modulo = "CargueMasivo",
+                                        Operacion = update ? "Actualizando imagen" : "Cargar imagen",
+                                        Mensaje = $"Imagen no encontrada: {sourceImagePath}",
+                                        DetalleError = exc.InnerException?.Message,
+                                        StackTrace = exc.StackTrace,
+                                        Archivo = fileName,
+                                        Linea = null, // Podrías parsear la línea del stack si deseas
+                                        SAP = sap,
+                                        ProductoId = product?.ProductId
+                                    };
+
+                                    db.TbLogErrores.Add(log);
+                                    //db.SaveChanges();
                                     continue;
                                 }
                                 catch (Exception ex)
                                 {
                                     errorImageUploadsCount++;
                                     Debug.WriteLine($"Error al cargar imagen '{sourceImagePath}': {ex.Message}");
+                                    var log = new TbLogErrores
+                                    {
+                                        Usuario = user,
+                                        Modulo = "CargueMasivo",
+                                        Operacion = update ? "Actualizando imagen" : "Cargar imagen",
+                                        Mensaje = $"Error al cargar imagen '{sourceImagePath}': {ex.Message}",
+                                        DetalleError = ex.InnerException?.Message,
+                                        StackTrace = ex.StackTrace,
+                                        Archivo = fileName,
+                                        Linea = null, 
+                                        SAP = sap,
+                                        ProductoId = product?.ProductId
+                                    };
+
+                                    db.TbLogErrores.Add(log);
                                     continue;
                                 }
                             }
@@ -937,7 +970,24 @@ namespace Vitro.Controllers
             catch (Exception error)
             {
                 Debug.WriteLine($"ERROR general: {error.Message}");
+                var log = new TbLogErrores
+                {
+                    Usuario = user,
+                    Modulo = "CargueMasivo",
+                    Operacion = "Cargar ",
+                    Mensaje = $"ERROR general: {error.Message}",
+                    DetalleError = error.InnerException?.Message,
+                    StackTrace = error.StackTrace,
+                    Archivo = fileName,
+                    Linea = null,
+                    SAP = "",
+                    ProductoId = ""
+                };
+
+                db.TbLogErrores.Add(log);
             }
+
+            db.SaveChanges();
 
             TempData["ProccessRowsCount"] = table.Rows.Count;
             TempData["ErrorImageUploadsCount"] = errorImageUploadsCount;
