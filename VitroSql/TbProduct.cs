@@ -52,5 +52,6 @@ namespace VitroSql
         public TipoParte TipoParte { get; set; }
         public Color Color { get; set; }
         public Procedencia Procedencia { get; set; }
+        public virtual ICollection<ProductImages> ProductImages { get; set; }
     }
 }

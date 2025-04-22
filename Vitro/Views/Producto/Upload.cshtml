@@ -8,6 +8,21 @@
 
 <div class="row">
     <h4 class="h4 text-sm">Recuerde que las imagenes de los productos que va a <b>cargar/actualizar</b> deben estar en la siguiente ruta <b>C:\imagenes_catalogo</b></h4>
+    <<!-- IFRAME oculto para manejar la respuesta de la descarga -->
+    <iframe id="downloadFrame" name="downloadFrame" style="display: none;"></iframe>
+
+    <!-- FORMULARIO que apunta al IFRAME -->
+    <div class="cell-md-12" style="display: flex; justify-content: flex-end;">
+        @using (Html.BeginForm("DownloadExcelReport", "Downloader", FormMethod.Post, new { target = "downloadFrame", id = "downloadForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <button type="submit" class="button fg-white" style="background-color: #0057b8;" id="downloadBtn">
+                    DESCARGAR REPORTE MAESTRO DE MATERIALES
+                </button>
+            </div>
+        }
+    </div>
     <div class="cell-md-12">
 
         @{
@@ -45,7 +60,7 @@
                     <a href="@Url.Action("Upload","Producto",new { State="Upload"})" class="button fg-white mt-5" style="background: #0057b8;">DESCARGAR DETALLE</a>
                 </div>
                 <div>
-                    
+
                 </div>
             </div>
             if (ViewBag.Errores != null && ((List<Vitro.Models.LogErrorCargaViewModel>)ViewBag.Errores).Count > 0)
@@ -105,10 +120,10 @@
             {
                 @Html.AntiForgeryToken()
                 @*<div class="form-group">
-                    @Html.LabelFor(x => x.Recursos)
-                    @Html.TextBoxFor(x => x.Recursos)
-                    @Html.ValidationMessageFor(x => x.Recursos, null, new { @class = "fg-red" })
-                </div>*@
+                        @Html.LabelFor(x => x.Recursos)
+                        @Html.TextBoxFor(x => x.Recursos)
+                        @Html.ValidationMessageFor(x => x.Recursos, null, new { @class = "fg-red" })
+                    </div>*@
                 <div class="form-group">
                     @Html.TextBoxFor(x => x.File, new { data_role = "file", @type = "file" })
                     @Html.ValidationMessageFor(x => x.File, null, new { @class = "fg-red" })
@@ -125,4 +140,27 @@
 </div>
 @section Scripts{
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        const btn = document.getElementById("downloadBtn");
+        const form = document.getElementById("downloadForm");
+
+        form.addEventListener("submit", function () {
+            btn.disabled = true;
+            btn.innerHTML = "Descargando...";
+
+            // Monitorear la cookie
+            const checkDownload = setInterval(() => {
+                if (document.cookie.includes("excelDownload=true")) {
+                    clearInterval(checkDownload);
+
+                    // Restaurar el botón
+                    btn.disabled = false;
+                    btn.innerHTML = "DESCARGAR REPORTE MAESTRO DE MATERIALES";
+
+                    // Eliminar cookie
+                    document.cookie = "excelDownload=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                }
+            }, 500); // revisa cada medio segundo
+        });
+    </script>
 }
