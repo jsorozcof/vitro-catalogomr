@@ -49,7 +49,8 @@ CREATE TABLE LogErroresCarga (
 
 -- 1. Crear el tipo de tabla para recibir los datos
 CREATE TYPE dbo.ProductType AS TABLE
-(
+(	 
+    [FILA]	INT,
     [PRODUCTOID] NVARCHAR(128),
 	[PAISID] NVARCHAR(128),	  
     [SAP] NVARCHAR (max),

@@ -17,6 +17,8 @@ using Microsoft.Ajax.Utilities;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Web.Http.Results;
+using ClosedXML.Excel;
+using Newtonsoft.Json;
 
 namespace Vitro.Controllers
 {
@@ -476,6 +478,7 @@ namespace Vitro.Controllers
 
                             model.FechaProceso = Convert.ToDateTime(errors.Rows[i]["FECHA_PROCESO"]);
                             model.Usuario = errors.Rows[i]["USUARIO"].ToString();
+                            model.Sap = errors.Rows[i]["SAP"].ToString();
                             model.Fila =  Convert.ToInt32(errors.Rows[i]["FILA"]);
                             model.Columna = errors.Rows[i]["COLUMNA"].ToString();
                             model.ValorIncorrecto = errors.Rows[i]["VALOR_INCORRECTO"].ToString();
@@ -542,13 +545,30 @@ namespace Vitro.Controllers
             {
                 ModelState.AddModelError("File", "Directorio de recursos no es válido o no existe");
             }
+            if (model.Actualizar)
+            {
+                if (!model.File.FileName.Contains("plantilla_cargue_actualizar.xlsx"))
+                {
+                    TempData["ErrorMensaje"] = $"ERROR: La plantilla seleccionada {model.File.FileName} no es válida para actualizaciones. Debe usar plantilla_cargue_actualizar.xlsx";
+                    return RedirectToAction("Upload", new { State = "Fails" });
+                }
+            }
+            else
+            {
+                if (!model.File.FileName.Contains("plantilla_cargue_inicial.xlsx"))
+                {
+                    TempData["ErrorMensaje"] = $"ERROR: La plantilla seleccionada {model.File.FileName} no es válida para creación de productos. Debe usar plantilla_cargue_inicial.xlsx";
+                    return RedirectToAction("Upload", new { State = "Fails" });
+                }
+            }
+          
 
             DataTable table = new VitroCore.ExcelManager().ReadFile(model.File.InputStream);
             ProcessProductRepository _processProductRepository = new ProcessProductRepository();
 
             if (table.Rows.Count > 1000)
             {
-                ModelState.AddModelError("File", "El archivo indicado supera los 1000 registros máximos para procesar");
+                ModelState.AddModelError("File", "El archivo indicado supera los 100 registros máximos para procesar");
             }
 
             if (!ModelState.IsValid)
@@ -563,6 +583,8 @@ namespace Vitro.Controllers
             var listProductoImagen = new List<ProductImages>();
             var productImages = new List<ProductImages>();
             var user = db.Users.Include(x => x.Pais).Where(x => x.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+
+           
 
             if (table.Rows.Count <= 1000)
             {
@@ -680,16 +702,20 @@ namespace Vitro.Controllers
             TempData["ErrorImageUploadsCount"] = Errores.Rows.Count;
             TempData["ErrorImageUploads"] = reg_errors;
             TempData["ProccessDataError"] = Errores;
-            TempData["ProccessSuccessCount"] = db.TemporalProductos.Count(x => x.Valido);
+            TempData["ProccessSuccessCount"] = db.TbProduct.Count();
             TempData["ProccessFailsCount"] = Errores.Rows.Count; //db.TemporalProductos.Count(x => !x.Valido);
-            InsertorUpdateMaxImage(productImages, model.Actualizar, model.File.FileName, table, Errores, user.FullName);
-            return Errores.Rows.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
-            //return reg_errors.Count > 0 ? RedirectToAction("Upload", new { State = "Upload" }) : RedirectToAction("Upload", new { State = "Upload" });
-            //return Errores.Rows.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
 
+            if (Errores.Rows.Count > 0)
+            {
+                return RedirectToAction("Upload", new { State = "Fails" });
+            }
+
+            // No hay errores, continuar con el procesamiento de imágenes
+            InsertorUpdateMaxImage(productImages, model.Actualizar, model.File.FileName, table, Errores, user.FullName);
+            return RedirectToAction("Upload", new { State = "Upload" });
         }
 
-        public  ActionResult InsertorUpdateMaxImage(List<ProductImages> list, bool update, string fileName, DataTable table, DataTable errors, string user)
+        private int InsertorUpdateMaxImage(List<ProductImages> list, bool update, string fileName, DataTable table, DataTable errors, string user)
         {
             int errorImageUploadsCount = 0;
 
@@ -830,16 +856,8 @@ namespace Vitro.Controllers
                 db.TbLogErrores.Add(log);
             }
 
-            db.SaveChanges();
-
-            TempData["ProccessRowsCount"] = table.Rows.Count;
-            TempData["ErrorImageUploadsCount"] = errorImageUploadsCount;
-            //TempData["ErrorImageUploads"] = errors;
-            //TempData["ProccessSuccessCount"] = db.TemporalProductos.Count(x => x.Procesado); //db.TemporalProductos.Count(x => x.Valido);
-            TempData["ProccessDataError"] = errors;
-            TempData["ProccessFailsCount"] = errors.Rows.Count;//db.TemporalProductos.Count(x => !x.Valido);
-            return errors.Rows.Count > 0 ? RedirectToAction("Upload", new { State = "Fails" }) : RedirectToAction("Upload", new { State = "Upload" });
-
+          var result = db.SaveChanges();
+          return result;
         }
 
         [HttpPost]
@@ -914,6 +932,66 @@ namespace Vitro.Controllers
             return File(Path.Combine(Server.MapPath("~/Resources/Files"), filename), "application/octet-stream", "resumen-cargue.xlsx");
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public ActionResult DownloadFileErrors()
+        {
+            var errores = db.TbLogErroresCarga
+                     .OrderBy(e => e.FILA)
+                     .ToList();
+
+            if (errores == null || !errores.Any())
+            {
+                TempData["MensajeError"] = "No hay errores registrados para exportar.";
+                return RedirectToAction("Upload");
+            }
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("LogErrores");
+
+                // Encabezados
+                worksheet.Cell(1, 1).Value = "ID";
+                worksheet.Cell(1, 2).Value = "Fecha Proceso";
+                worksheet.Cell(1, 3).Value = "Usuario";
+                worksheet.Cell(1, 4).Value = "SAP";
+                worksheet.Cell(1, 5).Value = "Fila";
+                worksheet.Cell(1, 6).Value = "Columna";
+                worksheet.Cell(1, 7).Value = "Valor Incorrecto";
+                worksheet.Cell(1, 8).Value = "Descripción Error";
+
+                // Formato encabezados
+                worksheet.Range("A1:H1").Style.Font.Bold = true;
+                worksheet.Range("A1:H1").Style.Fill.BackgroundColor = XLColor.LightGray;
+
+                int row = 2;
+                foreach (var error in errores)
+                {
+                    worksheet.Cell(row, 1).Value = error.ID;
+                    worksheet.Cell(row, 2).Value = error.FECHA_PROCESO.ToString("yyyy-MM-dd HH:mm:ss");
+                    worksheet.Cell(row, 3).Value = error.USUARIO;
+                    worksheet.Cell(row, 4).Value = error.SAP;
+                    worksheet.Cell(row, 5).Value = error.FILA;
+                    worksheet.Cell(row, 6).Value = error.COLUMNA;
+                    worksheet.Cell(row, 7).Value = error.VALOR_INCORRECTO;
+                    worksheet.Cell(row, 8).Value = error.DESCRIPCION_ERROR;
+                    row++;
+                }
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var fileName = $"LogErrores_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+        }
+
+
+
+        
         private void ServerUploadsFolder()
         {
             if (!Directory.Exists(Server.MapPath("~/Resources/Uploads")))

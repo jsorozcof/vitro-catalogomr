@@ -120,6 +120,7 @@ namespace VitroCore.Services
         {
             DataTable dt = new DataTable();
 
+            dt.Columns.Add("FILA", typeof(int));
             dt.Columns.Add("PRODUCTID", typeof(string));
             dt.Columns.Add("PAISID", typeof(string));
             dt.Columns.Add("SAP", typeof(string));
@@ -152,6 +153,8 @@ namespace VitroCore.Services
             dt.Columns.Add("ANTENA", typeof(bool));
             dt.Columns.Add("SUBENSAMBLE", typeof(bool));
             dt.Columns.Add("USUARIO", typeof(string));
+
+            int fila = 2;
 
             List<TbProduct> productList = productos.AsEnumerable()
                 .Select(row => new TbProduct
@@ -193,6 +196,7 @@ namespace VitroCore.Services
             foreach (var producto in productList)
             {
                 dt.Rows.Add(
+                    fila,
                     producto.ProductId, producto.PaisId, producto.SAP, producto.NAGS, producto.MarcaId,
                     producto.ModeloId, producto.Descripcion, producto.MercadoId, producto.ColorId, producto.TipoVidrioId,
                     producto.TipoParteId, producto.Ancho, producto.Alto, producto.Boton, producto.Red,
@@ -202,6 +206,7 @@ namespace VitroCore.Services
                     producto.FechaCreacion, producto.FechaCreacion, producto.Antena, producto.SubEnsamble,
                     producto.CreadoPor
                 );
+                fila++;
             }
 
             return dt;

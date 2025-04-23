@@ -23,10 +23,14 @@ namespace Vitro.Controllers
             var user = db.Users.Include(x => x.Pais).Where(x => x.UserName.Equals(User.Identity.Name)).FirstOrDefault();
             var model = new Models.SearchViewModel()
             {
-                Marcas = db.Marcas.Where(x => x.PaisId.Equals(user.PaisId ?? string.Empty) && x.Activo).OrderBy(x => x.Nombre).ToArray()
+                Marcas = db.Marcas.Where(x => x.PaisId.Equals(user.PaisId ?? string.Empty) && x.Activo).OrderBy(x => x.Nombre).ToArray(),
+                Parametro = "Descripcion"
             };
+
             return View(model);
         }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -41,6 +45,38 @@ namespace Vitro.Controllers
             switch (model.Mode)
             {
                 case "SearchViewModel":
+                    if (model.Parametro.Equals("Descripcion"))
+                    {
+                        var parametro = model.Busqueda?.Trim().ToLower();
+
+                        model.TbProduct = db.TbProduct
+                            .Include(p => p.Modelo.Marca.Pais)
+                            .Include(p => p.Modelo.Marca)
+                            .Include(p => p.TipoParte)
+                            .Include(p => p.Modelo)
+                            .Include(p => p.TipoParte.Clasificacion)
+                            .Where(p => p.Activo &&
+                                       (
+                                           p.Modelo.Nombre.ToLower().Contains(parametro) ||
+                                           p.Modelo.Marca.Nombre.ToLower().Contains(parametro)
+                                       ))
+                            .OrderBy(p => p.TipoParte.Clasificacion.Nombre)
+                            .ThenBy(p => p.Modelo.Nombre)
+                            .ThenBy(p => p.StartYear)
+                            .ThenBy(p => p.TipoParte.Nombre)
+                            .ToArray();
+
+                        var saps = model.TbProduct.Select(p => p.SAP).ToList();
+
+                        // Obtener imágenes relacionadas
+                        //model.ProductImages = db.ProductImages
+                        //    .Where(img => model.TbProduct.Select(p => p.SAP).Contains(img.Sap))
+                        //    .ToArray();
+                        model.ProductImages = db.ProductImages
+                                                .Where(img => saps.Contains(img.Sap))
+                                                .ToList();
+
+                    }
                     if (model.Parametro.Equals("SAP"))
                     {
                         //model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
@@ -54,7 +90,7 @@ namespace Vitro.Controllers
                         model.ProductImages = db.ProductImages.Where(x => x.Sap == model.Busqueda).ToArray();
 
                     }
-                    else
+                    else if(model.Parametro.Equals("NAGS"))
                     {
                         //model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
                         //    .Where(x => parametros.Contains(x.NAGS) && x.Activo)

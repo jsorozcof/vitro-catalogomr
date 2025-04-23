@@ -7,8 +7,10 @@
 <h2 class="h1 text-upper">@ViewBag.Title</h2>
 
 <div class="row">
-    <h4 class="h4 text-sm">Recuerde que las imagenes de los productos que va a <b>cargar/actualizar</b> deben estar en la siguiente ruta <b>C:\imagenes_catalogo</b></h4>
-    <<!-- IFRAME oculto para manejar la respuesta de la descarga -->
+    <h4>
+        Recuerde que las imágenes de los productos que desea <b>cargar o actualizar</b> deben estar ubicadas en la siguiente ruta de su equipo: <b>C:\imagenes_catalogo</b>
+    </h4>
+    <!-- IFRAME oculto para manejar la respuesta de la descarga -->
     <iframe id="downloadFrame" name="downloadFrame" style="display: none;"></iframe>
 
     <!-- FORMULARIO que apunta al IFRAME -->
@@ -41,7 +43,11 @@
                 classAlerta = "alert alert-success";
             }
 
-            <div class="row" style="margin-top:2%;">
+            @*<div style="color: red; font-weight: bold; font-size: 18px; margin-top: 15px;">
+                @Html.Raw(TempData["ErrorMensaje"])
+            </div>*@
+
+            <div class="row" style="font-weight: bold; font-size: 18px; margin-top: 2%;">
                 <div class="colspan-md-12">
                     <div class="@classAlerta" role="alert">
                         @TempData["ErrorMensaje"].ToString()
@@ -50,14 +56,23 @@
             </div>
         }
 
-        @if (Request.Params["State"].Equals("Fails"))
+        @{
+            var state = Request.Params["State"];
+        }
+        @if (!string.IsNullOrEmpty(state) && state == "Fails") // Request.Params["State"].Equals("Fails")
         {
             <div class="panel fg-white p-5 text-upper bg-red">
                 <span><strong>EL PROCESO DE CARGA HA SIDO INTERRUMPIDO DEBIDO A ERRORES. POR FAVOR, REVISE LOS DETALLES.</strong></span>
                 <div>
                     <a href="@Url.Action("Upload","Producto",new { State="Upload"})" class="button fg-white mt-5" style="background: #0057b8;">VOLVER</a>
                     ||
-                    <a href="@Url.Action("Upload","Producto",new { State="Upload"})" class="button fg-white mt-5" style="background: #0057b8;">DESCARGAR DETALLE</a>
+                    @using (Html.BeginForm("DownloadFileErrors", "Producto", FormMethod.Post, new { @id = "formDescargarErrores" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="button fg-white mt-5" style="background: #0057b8;">DESCARGAR DETALLE</button>
+                    }
+
+                    @*<a href="@Url.Action("DownloadFileErrors","Producto",new { State="Upload"})" class="button fg-white mt-5" style="background: #0057b8;">DESCARGAR DETALLE</a>*@
                 </div>
                 <div>
 
@@ -73,6 +88,7 @@
                                 <tr>
                                     <th>Fecha</th>
                                     <th>Usuario</th>
+                                    <th>SAP</th>
                                     <th>Fila</th>
                                     <th>Columna</th>
                                     <th>Valor Incorrecto</th>
@@ -85,6 +101,7 @@
                                     <tr>
                                         <td>@error.FechaProceso</td>
                                         <td>@error.Usuario</td>
+                                        <td>@error.Sap</td>
                                         <td>@error.Fila</td>
                                         <td>@error.Columna</td>
                                         <td>@error.ValorIncorrecto</td>
@@ -106,13 +123,13 @@
                     <div>Se han procesado <strong>@TempData["ProccessRowsCount"]</strong> productos</div>
                     <div><span class="mif-chevron-right icon"></span> Número de registros exitosos <strong>@TempData["ProccessSuccessCount"]</strong></div>
                     <hr />
-                    @using (Html.BeginForm("ResultUpload", "Producto", FormMethod.Post))
+                    @*@using (Html.BeginForm("ResultUpload", "Producto", FormMethod.Post))
                     {
                         @Html.AntiForgeryToken()
                         <div class="form-group">
                             <button type="submit" class="button fg-white" style="background-color: #0057b8;">DESCARGAR RESULTADOS</button>
                         </div>
-                    }
+                    }*@
                 </div>
             }
             <div class="my-5"></div>
@@ -120,10 +137,10 @@
             {
                 @Html.AntiForgeryToken()
                 @*<div class="form-group">
-                        @Html.LabelFor(x => x.Recursos)
-                        @Html.TextBoxFor(x => x.Recursos)
-                        @Html.ValidationMessageFor(x => x.Recursos, null, new { @class = "fg-red" })
-                    </div>*@
+                    @Html.LabelFor(x => x.Recursos)
+                    @Html.TextBoxFor(x => x.Recursos)
+                    @Html.ValidationMessageFor(x => x.Recursos, null, new { @class = "fg-red" })
+                </div>*@
                 <div class="form-group">
                     @Html.TextBoxFor(x => x.File, new { data_role = "file", @type = "file" })
                     @Html.ValidationMessageFor(x => x.File, null, new { @class = "fg-red" })

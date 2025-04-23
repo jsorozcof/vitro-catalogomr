@@ -25,12 +25,14 @@
             <div class="form-group">
 
                 <label>Buscar Por:</label>&emsp;
-                @Html.RadioButtonFor(x => x.Parametro, "SAP", new { data_role = "radio", data_style = "2", @checked = "", data_caption = "Código SAP" })
+                @Html.RadioButtonFor(x => x.Parametro, "Descripcion", new { data_role = "radio", data_style = "2",  data_caption = "Descripción" })
+                @Html.RadioButtonFor(x => x.Parametro, "SAP", new { data_role = "radio", data_style = "2",  data_caption = "Código SAP" })
                 @Html.RadioButtonFor(x => x.Parametro, "NAGS", new { data_role = "radio", data_style = "2", data_caption = "Código NAGS" })
             </div>
             <div class="form-group">
                 <label>Párametros de Búsqueda:</label>
-                @Html.TextBoxFor(x => x.Busqueda, new { data_role = "taginput" })
+                @*@Html.TextBoxFor(x => x.Busqueda, new { data_role = "taginput" })*@
+                @Html.TextBoxFor(x => x.Busqueda, new { @class = "form-control", placeholder = "Buscar..." })
             </div>
             <div class="form-group">
                 <button type="submit" class="button fg-white" style="background-color: #0057b8;">BUSCAR</button>
