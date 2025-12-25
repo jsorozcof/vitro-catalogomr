@@ -10,8 +10,8 @@ namespace VitroSql
     {
         [Key]
         public string PromocionId { get; set; }
-        public DateTime FechaInicio { get; set; }
-        public DateTime FechaFinal { get; set; }
+        public DateTime? FechaInicio { get; set; }
+        public DateTime? FechaFinal { get; set; }
         public int DiasVigencia { get; set; }
         //public string ProductoId { get; set; }
         public string ProductId { get; set; }

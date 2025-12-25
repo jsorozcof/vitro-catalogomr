@@ -7,8 +7,8 @@
 <div class="row" ng-app="app" ng-controller="searchController">
     <div class="cell-12">
         <ul data-role="tabs" data-expand="true">
-            <li><a href="#busquedaCodigo" class="text-upper text-light">por código</a></li>
-            <li><a href="#busqueda" class="text-upper text-light">por modelo</a></li>
+            <li><a href="#busquedaCodigo"  class="text-upper text-light" ng-click="modeForm()">por código</a></li>
+            <li><a href="#busqueda" class="text-upper text-light" ng-click="modeForm()" >por modelo</a></li>
             <li><a href="#productnotfound" class="text-upper text-light" ng-click="modeForm()">no encontraste tu producto?</a></li>
         </ul>
         @if (TempData["Message"] != null)
@@ -23,20 +23,40 @@
         @using (Html.BeginForm("Retrieve", "Search", FormMethod.Post))
         {
             <div class="form-group">
-
                 <label>Buscar Por:</label>&emsp;
-                @Html.RadioButtonFor(x => x.Parametro, "Descripcion", new { data_role = "radio", data_style = "2",  data_caption = "Descripción" })
-                @Html.RadioButtonFor(x => x.Parametro, "SAP", new { data_role = "radio", data_style = "2",  data_caption = "Código SAP" })
-                @Html.RadioButtonFor(x => x.Parametro, "NAGS", new { data_role = "radio", data_style = "2", data_caption = "Código NAGS" })
+                @Html.RadioButtonFor(x => x.Parametro, "Descripcion", new {
+               @class = "parametro-radio",
+               data_role = "radio",
+               data_style = "2",
+               data_caption = "Descripción",
+               ng_click = "modeForm()"
+               })
+                @Html.RadioButtonFor(x => x.Parametro, "SAP", new { 
+               @class = "parametro-radio", 
+               data_role = "radio", 
+               data_style = "2", 
+               data_caption = "Código SAP", 
+               ng_click = "modeForm()" 
+               })
+
+                @Html.RadioButtonFor(x => x.Parametro, "NAGS", new { 
+                @class = "parametro-radio", 
+                data_role = "radio", 
+                data_style = "2", 
+                data_caption = "Código NAGS", 
+                ng_click = "modeForm()" 
+              })
             </div>
+
             <div class="form-group">
                 <label>Párametros de Búsqueda:</label>
-                @*@Html.TextBoxFor(x => x.Busqueda, new { data_role = "taginput" })*@
-                @Html.TextBoxFor(x => x.Busqueda, new { @class = "form-control", placeholder = "Buscar..." })
+                @Html.TextBoxFor(x => x.Busqueda, new { @class = "form-control", placeholder = "Buscar...", id = "BusquedaInput" })
             </div>
+
             <div class="form-group">
                 <button type="submit" class="button fg-white" style="background-color: #0057b8;">BUSCAR</button>
             </div>
+
             @Html.HiddenFor(x => x.Mode, new { Value = "SearchViewModel" })
             @Html.AntiForgeryToken()
         }
@@ -131,48 +151,55 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model.TbProduct != null && Model.TbProduct.Count() > 0)
+                @if (Model.TbProduct != null && Model.TbProduct.Any())
                 {
                     foreach (var producto in Model.TbProduct)
                     {
+                        var imagen = Model.ProductImages != null
+                            ? Model.ProductImages
+                                .Where(x => x.ProductId == producto.ProductId)
+                                .OrderBy(x => x.Posicion)
+                                .FirstOrDefault()
+                            : null;
+
                         <tr>
-                            <td><img src="~/Resources/Uploads/@Model.ProductImages.Where(x=>x.ProductId.Equals(producto.ProductId)).OrderBy(x=>x.Posicion).FirstOrDefault().Nombre" width="150" height="150" /></td>
-                            <td><a href="@Url.Action("Details","Search",new { id=producto.ProductId })">@producto.SAP</a></td>
-                            <td><a href="@Url.Action("Details","Search",new { id=producto.ProductId })">@producto.NAGS</a></td>
-                            <td>@producto.Modelo.Marca.Nombre</td>
-                            <td>@producto.Modelo.Nombre</td>
-                            <td>@producto.TipoParte.Clasificacion.Nombre</td>
-                            <td>@producto.TipoParte.Nombre</td>
-                            <td>@producto.StartYear - @producto.EndYear</td>
                             <td>
-                                @if (producto.Homologo)
-                                {<span>SI</span> }
-                                else
-                                { <span>NO</span>}
-                            </td>
-                            <td>
-                                @if (producto.Antena == true)
+                                @if (imagen != null && !string.IsNullOrEmpty(imagen.Nombre))
                                 {
-                                    <span>SI</span>
+                                    <img src="~/Resources/Uploads/@imagen.Nombre" width="150" height="150" />
                                 }
-                                else {
-                                    <span>NO</span>
+                                else
+                                {
+                                    <span>Sin imagen</span>
                                 }
-                        </td>
-                    </tr>
+                            </td>
+                            <td><a href="@Url.Action("Details", "Search", new { id = producto.ProductId })">@producto.SAP</a></td>
+                            <td><a href="@Url.Action("Details", "Search", new { id = producto.ProductId })">@producto.NAGS</a></td>
+                            <td>@(producto != null && producto.Modelo != null && producto.Modelo.Marca != null ? producto.Modelo.Marca.Nombre : "—")</td>
+                            <td>@(producto != null && producto.Modelo != null ? producto.Modelo.Nombre : "—")</td>
+                            <td>@(producto != null && producto.TipoParte != null && producto.TipoParte.Clasificacion != null ? producto.TipoParte.Clasificacion.Nombre : "—")</td>
+                            <td>@(producto != null && producto.TipoParte != null ? producto.TipoParte.Nombre : "—")</td>
+                            <td>@(producto != null ? producto.StartYear + " - " + producto.EndYear : "—")</td>
+                            <td class="text-center">
+                                <span>@(producto.Homologo ? "SI" : "NO")</span>
+                            </td>
+                            <td class="text-center">
+                                <span>@(producto.Antena == true ? "SI" : "NO")</span>
+                            </td>
+                        </tr>
+                    }
                 }
-            }
             </tbody>
         </table>
     </div>
 
     <div class="row">
-        @if (Model.Homologos != null)
+        @if (Model.TbHomologos != null)
         {
             <div class="cell-12">
                 <h3 class="text-light text-muted text-upper">tambien puedes utilizar estos</h3>
             </div>
-            foreach (var homologo in Model.Homologos)
+            foreach (var homologo in Model.TbHomologos)
             {
                 <div class="cell-4">
                     <div class="card">
@@ -195,12 +222,12 @@
                                 </tr>
                                 <tr>
                                     <th>MODELO</th>
-                                    <td>@homologo.Modelo.Nombre</td>
+                                    <td>@homologo.Modelo?.Nombre</td>
                                 </tr>
                             </table>
                         </div>
                         <div class="card-footer">
-                            <a href="@Url.Action("Details", "Search", new { id = homologo.ProductoId })" class="button small">DETALLES</a>
+                            <a href="@Url.Action("Details", "Search", new { id = homologo.ProductId })" class="button small">DETALLES</a>
                         </div>
                     </div>
                 </div>
@@ -230,6 +257,22 @@
             });
             $("td[name='tddescr']").height(maxghtdescr);
             $("div.panel").height(maxghtpanel);
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const radios = document.querySelectorAll(".parametro-radio");
+            const inputBusqueda = document.getElementById("BusquedaInput");
+            const form = document.querySelector("form");
+
+            radios.forEach(radio => {
+                radio.addEventListener("change", function () {
+                    if (inputBusqueda) {
+                        inputBusqueda.value = "";
+                        inputBusqueda.focus();
+                    }
+
+                });
+            });
         });
     </script>
 }

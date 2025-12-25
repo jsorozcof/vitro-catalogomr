@@ -117,11 +117,14 @@
         }
         else
         {
-            if (TempData["ProccessRowsCount"] != null)
+            if (TempData["ProccessFailsCount"] != null && Convert.ToInt32(TempData["ProccessFailsCount"]) == 0)
             {
                 <div class="panel fg-white p-5 text-upper" style="background-color: #005776;">
-                    <div>Se han procesado <strong>@TempData["ProccessRowsCount"]</strong> productos</div>
-                    <div><span class="mif-chevron-right icon"></span> Número de registros exitosos <strong>@TempData["ProccessSuccessCount"]</strong></div>
+                    <div>¡EL PROCESO DE CARGA DE PRODUCTOS FINALIZÓ EXITOSAMENTE!</div>
+                    @*<div>
+                        <span class="mif-chevron-right icon"></span> Número de registros exitosos
+                        <strong>@TempData.Peek("ProccessSuccessCount")</strong>
+                    </div>*@
                     <hr />
                     @*@using (Html.BeginForm("ResultUpload", "Producto", FormMethod.Post))
                     {

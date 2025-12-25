@@ -51,8 +51,8 @@ namespace Vitro.Controllers
                 pdf.CrearMembrete();
                 pdf.CrearMarcaAgua();
 
-                var producto = db.Productos.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductoId.Equals(referencia)).FirstOrDefault();
-                var image = db.ProductoImagenes.Include(x => x.Imagen).Where(x => x.ProductoId.Equals(producto.ProductoId)).FirstOrDefault();
+                var producto = db.TbProduct.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductId.Equals(referencia)).FirstOrDefault();
+                var image = db.ProductImages.Where(x => x.ProductId.Equals(producto.ProductId)).FirstOrDefault();
 
                 DataTable tablaEncabezado = new DataTable();
                 DataTable tablaDetalle = new DataTable();
@@ -109,7 +109,16 @@ namespace Vitro.Controllers
                 rowDetalle[17] = producto.Homologo;
                 tablaDetalle.Rows.Add(rowDetalle);
 
-                byte[] imagecontent = System.IO.File.ReadAllBytes(Server.MapPath($"~/Resources/Uploads/{image.Imagen.Nombre}"));
+                byte[] imagecontent = null;
+                if (!string.IsNullOrWhiteSpace(image?.Nombre))
+                {
+                    string path = Server.MapPath($"~/Resources/Uploads/{image.Nombre}");
+
+                    if (System.IO.File.Exists(path))
+                    {
+                        imagecontent = System.IO.File.ReadAllBytes(path);
+                    }
+                }
                 pdf.CrearTablaAnidada(tablaEncabezado, tablaDetalle, imagecontent);
             }
 
@@ -140,7 +149,7 @@ namespace Vitro.Controllers
                 pdf.CrearMarcaAgua();
 
                 var usuario = db.Users.Include(x => x.Pais).Where(x => x.UserName.Equals(User.Identity.Name)).FirstOrDefault();
-                var productos = db.Productos.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.Activo && x.MercadoId.Equals(segmento))
+                var productos = db.TbProduct.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.Activo && x.MercadoId.Equals(segmento))
                     .OrderBy(x => x.Mercado.Nombre).ThenBy(x => x.Modelo.Marca.Nombre).ThenBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.EndYear).ToArray();
                 var imagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
                 var filter = productos.Select(x => new { Marca = x.Modelo.Marca.Nombre, Modelo = x.Modelo.Nombre, StartYear = x.StartYear, EndYear = x.EndYear }).Distinct();
@@ -207,7 +216,7 @@ namespace Vitro.Controllers
                         tablaDetalle.Rows.Add(rowDetalle);
                     }
 
-                    byte[] imagecontent = System.IO.File.ReadAllBytes(Server.MapPath($"~/Resources/Uploads/{imagenes.Where(x => x.ProductoId.Equals(productos.Where(y => y.Modelo.Marca.Nombre.Equals(prod.Marca) && y.Modelo.Nombre.Equals(prod.Modelo) && y.StartYear == prod.StartYear && y.EndYear == prod.EndYear).FirstOrDefault().ProductoId)).FirstOrDefault().Imagen.Nombre}"));
+                    byte[] imagecontent = System.IO.File.ReadAllBytes(Server.MapPath($"~/Resources/Uploads/{imagenes.Where(x => x.ProductoId.Equals(productos.Where(y => y.Modelo.Marca.Nombre.Equals(prod.Marca) && y.Modelo.Nombre.Equals(prod.Modelo) && y.StartYear == prod.StartYear && y.EndYear == prod.EndYear).FirstOrDefault().ProductId)).FirstOrDefault().Imagen.Nombre}"));
                     datamodel.Add(new VitroCore.PdfDataModel()
                     {
                         TablaEncabezado = tablaEncabezado,

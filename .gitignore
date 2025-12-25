@@ -1,0 +1,7 @@
+﻿################################################################################
+# Este archivo .gitignore ha sido creado automáticamente por Microsoft(R) Visual Studio.
+################################################################################
+
+/Vitro/Web.config
+/Vitro/Web.Debug.config
+/Vitro/Web.Release.config

@@ -12,10 +12,10 @@ namespace Vitro.Models
         public string ProductoId { get; set; }
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "dd/MM/yyyy")]
-        public DateTime FechaInicio { get; set; }
+        public DateTime? FechaInicio { get; set; }
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "dd/MM/yyyy")]
-        public DateTime FechaFinal { get; set; }
+        public DateTime? FechaFinal { get; set; }
         public string Descripcion { get; set; }
         public string SAP { get; set; }
         public string NAGS { get; set; }
@@ -25,7 +25,7 @@ namespace Vitro.Models
 
         public string[] Productos { get; set; }
 
-        public List<VitroSql.Producto> ProductosList { get; set; }
+        public List<VitroSql.TbProduct> ProductosList { get; set; }
         public List<VitroSql.ProductoPromocion> ProductosPromocionesList { get; set; }
     }
 }

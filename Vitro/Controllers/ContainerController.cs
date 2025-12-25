@@ -44,7 +44,8 @@ namespace Vitro.Controllers
         [Route("Producto/ByNAGS/{id}")]
         public bool ExistsProductoByCodigoNAGS(string id)
         {
-            return db.Productos.Any(x => x.SAP.Equals(id));
+            //return db.Productos.Any(x => x.SAP.Equals(id));
+            return db.TbProduct.Any(x => x.SAP.Equals(id));
         }
     }
 }

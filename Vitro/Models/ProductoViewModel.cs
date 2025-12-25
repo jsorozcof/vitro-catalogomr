@@ -49,8 +49,8 @@ namespace Vitro.Models
         public bool Holder { get; set; }
         public bool SensorCondensacion { get; set; }
         public bool Homologo { get; set; }
-        public bool Antena { get; set; }
-        public bool SubEnsamble { get; set; }
+        public bool? Antena { get; set; }
+        public bool? SubEnsamble { get; set; }
         [Required]
         public string Clasificacion { get; set; }
         [Required]
@@ -74,7 +74,7 @@ namespace Vitro.Models
         public IEnumerable<VitroSql.TipoVidrio> TipoVidroList { get; set; }
         public IEnumerable<VitroSql.TipoParte> TipoParteList { get; set; }
         public IEnumerable<VitroSql.Procedencia> ProcedenciaList { get; set; }
-        public IEnumerable<VitroSql.Producto> Productos { get; set; }
+        //public IEnumerable<VitroSql.Producto> Productos { get; set; }
         public IEnumerable<VitroSql.TbProduct> TbProduct { get; set; }
         public IEnumerable<VitroSql.Producto> ProdcutosCount { get; set; }
         public IEnumerable<VitroSql.TbProduct> TbProductsCount { get; set; }

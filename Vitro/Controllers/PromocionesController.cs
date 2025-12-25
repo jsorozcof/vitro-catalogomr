@@ -18,7 +18,7 @@ namespace Vitro.Controllers
         {
             var model = new Models.PromocionesViewModel()
             {
-                ProductosList = db.Productos.Where(x => x.Activo).ToList()
+                ProductosList = db.TbProduct.Where(x => x.Activo).ToList()
             };
             return View(model);
         }
@@ -65,12 +65,12 @@ namespace Vitro.Controllers
 
             }
 
-            TimeSpan ndias = model.FechaFinal - model.FechaInicio;
+            TimeSpan? ndias = model.FechaFinal - model.FechaInicio;
             var promocion = db.ProductoPromociones.Where(x => x.PromocionId.Equals(model.PromocionId)).FirstOrDefault();
             promocion.FechaInicio = model.FechaInicio;
             promocion.FechaFinal = model.FechaFinal;
             promocion.FechaModificacion = DateTime.Now;
-            promocion.DiasVigencia = ndias.Days;
+            promocion.DiasVigencia = ndias.Value.Days;
             promocion.Stock = model.Stock;
             promocion.Precio = model.Precio;
             db.Entry<VitroSql.ProductoPromocion>(promocion).State = EntityState.Modified;
@@ -83,7 +83,7 @@ namespace Vitro.Controllers
         public FileResult DownloadTemplate(Models.PromocionesViewModel model)
         {
             string filepath = $"{Server.MapPath("~/Resources/Files")}\\{Guid.NewGuid()}.xlsx";
-            var productos = db.Productos.ToList();
+            var productos = db.TbProduct.ToList();
 
             DataTable table = new DataTable();
             table.Columns.Add("ID", typeof(string));
@@ -97,8 +97,8 @@ namespace Vitro.Controllers
 
             foreach (string idprod in model.Productos)
             {
-                var producto = productos.Where(x => x.ProductoId.Equals(idprod)).FirstOrDefault();
-                table.Rows.Add(new object[] { producto.ProductoId, producto.SAP, producto.NAGS, producto.Descripcion });
+                var producto = productos.Where(x => x.ProductId.Equals(idprod)).FirstOrDefault();
+                table.Rows.Add(new object[] { producto.ProductId, producto.SAP, producto.NAGS, producto.Descripcion });
             }
 
             VitroCore.ExcelManager excel = new VitroCore.ExcelManager();
@@ -137,8 +137,8 @@ namespace Vitro.Controllers
                             break;
                     }
                 }
-                TimeSpan ndias = promocion.FechaFinal - promocion.FechaInicio;
-                promocion.DiasVigencia = ndias.Days;
+                TimeSpan? ndias = promocion.FechaFinal - promocion.FechaInicio;
+                promocion.DiasVigencia = ndias.Value.Days;
                 if (!db.ProductoPromociones.Any(x => x.ProductId.Equals(promocion.ProductId)))
                 {
                     promociones.Add(promocion);

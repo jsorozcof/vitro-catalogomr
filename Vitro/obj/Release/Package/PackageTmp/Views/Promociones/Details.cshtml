@@ -33,16 +33,16 @@
                 @foreach (var promocion in Model)
                 {
                     <tr>
-                        <td>@promocion.Producto.SAP</td>
-                        <td>@promocion.Producto.NAGS</td>
-                        <td>@promocion.Producto.Descripcion</td>
+                        <td>@(promocion.Product?.SAP ?? "N/A")</td>
+                        <td>@(promocion.Product?.NAGS ?? "N/A")</td>
+                        <td>@(promocion.Product?.Descripcion ?? "Sin descripción")</td>
                         <td>@promocion.Precio</td>
                         <td>@promocion.Stock</td>
-                        <td>@promocion.FechaInicio.ToString("dd/MM/yyyy")</td>
-                        <td>@promocion.FechaFinal.ToString("dd/MM/yyyy")</td>
+                        <td>@(promocion.FechaInicio?.ToString("dd/MM/yyyy") ?? "Sin fecha")</td>
+                        <td>@(promocion.FechaFinal?.ToString("dd/MM/yyyy") ?? "Sin fecha")</td>
                         <td>@promocion.DiasVigencia</td>
                         <td>
-                            @if (promocion.FechaFinal > DateTime.Today)
+                            @if (promocion.FechaFinal.HasValue && promocion.FechaFinal > DateTime.Today)
                             {
                                 <button class="button success small w-100">VIGENTE</button>
                             }

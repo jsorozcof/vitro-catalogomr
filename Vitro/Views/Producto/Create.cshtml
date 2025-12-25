@@ -158,6 +158,19 @@
             </div>
         </div>
     </div>
+    <!-- Producto creado-->
+    <div class="dialog success" data-role="dialog" id="dialogProductoCreado">
+        <div class="dialog-title">PRODUCTO CREADO</div>
+        <div class="dialog-content p-4">
+            El producto <strong>@Model.SAP</strong> ha sido creado exitosamente.<br />
+            ¿Desea crear otro producto o ir al listado?
+        </div>
+        <div class="dialog-actions">
+            <button class="button js-dialog-close" onclick="document.location.href='@Url.Action("Create","Producto")'">CREAR OTRO</button>
+            <button class="button js-dialog-close" onclick="document.location.href='@Url.Action("Index","Producto")'">IR AL LISTADO</button>
+        </div>
+    </div>
+
 
     <div class="dialog alert" data-role="dialog" id="dialogCreate">
         <div class="dialog-title">ALERTA</div>
@@ -170,7 +183,7 @@
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/angular")
     <script src="~/Scripts/productos.js"></script>
@@ -193,4 +206,15 @@
 
         });
     </script>
+
+
+    @if (TempData["ProductoCreado"] != null && (bool)TempData["ProductoCreado"])
+    {
+        <script>
+            $(document).ready(function () {
+                Metro.dialog.open("#dialogProductoCreado");
+            });
+        </script>
+    }
+
 }

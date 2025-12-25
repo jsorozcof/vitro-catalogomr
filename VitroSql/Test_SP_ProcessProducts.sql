@@ -53,7 +53,7 @@ WHERE H.SAP IN (
 truncate table dbO.LogErroresSistema
 
 select * from dbo.TempProducto
-select * from dbo.Product	 where SAP = '2000107187_1'
+select * from dbo.Product	 where SAP = '2000107187'
 SELECT *
   FROM [catalogomr].[dbo].[ProductImages]	where SAP = '2000107187_1'
   where SAP = '2000099932' ORDER BY Posicion asc

@@ -20,4 +20,5 @@ namespace Vitro.Models
 
         public DataTable LogErrores { get; set; }
     }
+
 }

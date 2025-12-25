@@ -83,7 +83,10 @@
                                                 <tr class="bg-green">
                                                     <th colspan="2">
                                                         <a href="@Url.Action("Details","Search",new { id=promocion.Product.ProductId })" class="fg-white text-light">@promocion.Product.Descripcion</a>
-                                                        <div class="fg-white text-light size-1" style="font-size: 12px;">VALIDA DESDE @promocion.FechaInicio.ToString("dd/MM/yyyy") HASTA @promocion.FechaFinal.ToString("dd/MM/yyyy")</div>
+                                                        <div class="fg-white text-light size-1" style="font-size: 12px;">
+                                                            VALIDA DESDE @(promocion.FechaInicio.HasValue ? promocion.FechaInicio.Value.ToString("dd/MM/yyyy") : "Sin fecha")
+                                                            HASTA @(promocion.FechaFinal.HasValue ? promocion.FechaFinal.Value.ToString("dd/MM/yyyy") : "Sin fecha")
+                                                        </div>
                                                     </th>
                                                 </tr>
                                                 <tr>

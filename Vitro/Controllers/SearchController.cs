@@ -34,9 +34,10 @@ namespace Vitro.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Retrieve(Models.SearchViewModel model)
+        public ActionResult Retrieve (Models.SearchViewModel model)
         {
             string[] parametros = { };
+
             if (!string.IsNullOrEmpty(model.Busqueda))
             {
                 parametros = model.Busqueda.Split(',');
@@ -58,7 +59,8 @@ namespace Vitro.Controllers
                             .Where(p => p.Activo &&
                                        (
                                            p.Modelo.Nombre.ToLower().Contains(parametro) ||
-                                           p.Modelo.Marca.Nombre.ToLower().Contains(parametro)
+                                           p.Modelo.Marca.Nombre.ToLower().Contains(parametro) ||
+                                           p.Descripcion.ToLower().Contains(parametro)
                                        ))
                             .OrderBy(p => p.TipoParte.Clasificacion.Nombre)
                             .ThenBy(p => p.Modelo.Nombre)
@@ -129,14 +131,29 @@ namespace Vitro.Controllers
                     }
                     else
                     {
-                        //model.Productos = db.Productos.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
-                        //    .Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && x.Activo)
-                        //    .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
-                        //model.ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).ToArray();
                         model.TbProduct = db.TbProduct.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
-                         .Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && x.Activo)
-                         .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
-                        model.ProductImages = db.ProductImages.Where(x => x.Sap == model.Busqueda).ToArray();
+                            .Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && x.Activo)
+                            .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                       
+                        // Extraer los IDs de los productos obtenidos
+                        var productIds = model.TbProduct.Select(p => p.ProductId).ToList();
+
+                        // Cargar solo las imágenes relacionadas
+                        model.ProductImages = db.ProductImages
+                            .Where(x => productIds.Contains(x.ProductId))
+                            .ToList();
+
+                        //model.ProductImages = db.ProductImages
+                        //    .Include(x => x.Contenido)
+                        //    .Where(x => productIds.Contains(x.ProductId))
+                        //    .ToList();
+
+
+                        //model.ProductImages = db.ProductImages.Include(x => x.Contenido).ToArray();
+                        //model.TbProduct = db.TbProduct.Include(x => x.Modelo.Marca.Pais).Include(x => x.Modelo.Marca).Include(x => x.TipoParte).Include(x => x.Modelo).Include(x => x.TipoParte.Clasificacion)
+                        // .Where(x => x.Modelo.Marca.MarcaId.Equals(model.Marca) && x.Modelo.ModeloId.Equals(model.Modelo) && x.Activo)
+                        // .OrderBy(x => x.Modelo.Nombre).ThenBy(x => x.StartYear).ThenBy(x => x.TipoParte.Clasificacion.Nombre).ThenBy(x => x.TipoParte.Nombre).ToArray();
+                        //model.ProductImages = db.ProductImages.Where(x => x.Sap == model.Busqueda).ToArray();
                     }
                     break;
             }
@@ -189,6 +206,7 @@ namespace Vitro.Controllers
                                         .Include(x => x.Procedencia).Where(x => x.ProductId.Equals(id)).FirstOrDefault();
 
             //var homologos = db.Productos.Include(x => x.Modelo).Where(x => x.NAGS.ToLower().Contains(producto.NAGS.ToLower())).ToList();
+            
             var homologos = db.TbProduct.Include(x => x.Modelo).Where(x => x.NAGS.ToLower().Contains(producto.NAGS.ToLower())).ToList();
             //var imagenes = db.ProductImages
             //     .SqlQuery($"SELECT p.ProductId,  pi.SAP AS Sap, pi.ImagenId, pi.Contenido, pi.Posicion, pi.Nombre FROM Product p LEFT JOIN ProductImages pi ON p.ProductId = pi.ProductId ORDER BY p.ProductId;")
@@ -199,10 +217,6 @@ namespace Vitro.Controllers
                     FROM ProductImages 
                     WHERE ProductId = @p0 ORDER BY Posicion", producto.ProductId).ToList();
 
-            foreach (var img in imagenes)
-            {
-                //Console.WriteLine($"ImagenId: {img.ImagenId}, ProductId: {img.ProductId}, Posicion: {img.Posicion}");
-            }
 
             var viewmodel = new Models.DetailsProductoViewModel()
             {

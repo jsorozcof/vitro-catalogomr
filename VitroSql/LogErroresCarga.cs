@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,5 +21,13 @@ namespace VitroSql
         public string COLUMNA { get; set; }
         public string VALOR_INCORRECTO { get; set; }
         public string DESCRIPCION_ERROR { get; set; }
+    }
+
+    public class ProcessResult
+    {
+        public int RowsInserted { get; set; }
+        public int RowsUpdated { get; set; }
+        public int ErrorsCount { get; set; }
+        public DataTable Errores { get; set; } = new DataTable();
     }
 }

@@ -19,6 +19,8 @@ using System.Diagnostics;
 using System.Web.Http.Results;
 using ClosedXML.Excel;
 using Newtonsoft.Json;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.Text.RegularExpressions;
 
 namespace Vitro.Controllers
 {
@@ -35,12 +37,12 @@ namespace Vitro.Controllers
             {
                 Marcas = db.Marcas.Where(x => x.PaisId.Equals(user.PaisId ?? string.Empty) && x.Activo).OrderBy(x => x.Nombre).ToArray()
             };
-            model.TotalProductos = db.Productos.Where(x => x.Modelo.Marca.Pais.PaisId.Equals(user.PaisId) && x.Activo).Count();
-            model.TotalproductIMG = (from PD in db.Productos
-                                     join PI in db.ProductoImagenes on PD.ProductoId equals PI.ProductoId
+            model.TotalProductos = db.TbProduct.Where(x => x.Modelo.Marca.Pais.PaisId.Equals(user.PaisId) && x.Activo).Count();
+            model.TotalproductIMG = (from PD in db.TbProduct
+                                     join PI in db.ProductoImagenes on PD.ProductId equals PI.ProductoId
                                      join IMG in db.Imagenes on PI.ImagenId equals IMG.ImagenId
                                      where IMG.Nombre.Contains("default")
-                                     select new { PD.ProductoId }).Count();
+                                     select new { PD.ProductId }).Count();
 
             
             return View(model);
@@ -103,7 +105,7 @@ namespace Vitro.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (!db.Productos.Any(x => x.ProductoId.Equals(id)))
+            if (!db.TbProduct.Any(x => x.ProductId.Equals(id)))
             {
                 return HttpNotFound();
             }
@@ -124,16 +126,16 @@ namespace Vitro.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (!db.Productos.Any(x => x.ProductoId.Equals(id)))
+            if (!db.TbProduct.Any(x => x.ProductId.Equals(id)))
             {
                 return HttpNotFound();
             }
 
-            var producto = db.Productos.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.Modelo.Marca.Pais).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductoId.Equals(id)).FirstOrDefault();
+            var producto = db.TbProduct.Include(x => x.Modelo.Marca).Include(x => x.Modelo).Include(x => x.Modelo.Marca.Pais).Include(x => x.TipoParte).Include(x => x.TipoVidrio).Include(x => x.TipoParte.Clasificacion).Include(x => x.Mercado).Include(x => x.Color).Include(x => x.Procedencia).Where(x => x.ProductId.Equals(id)).FirstOrDefault();
 
             var viewmodel = new Models.ProductoViewModel()
             {
-                ProductoId = producto.ProductoId,
+                ProductoId = producto.ProductId,
                 Pais = producto.Modelo.Marca.Pais.PaisId,
                 Marca = producto.Modelo.Marca.MarcaId,
                 SAP = producto.SAP,
@@ -172,7 +174,7 @@ namespace Vitro.Controllers
                 PaisList = db.Paises.ToArray(),
                 Clasificaciones = db.Clasificaciones.ToArray(),
                 ProcedenciaList = db.Procedencias.ToArray(),
-                ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).Where(x => x.ProductoId.Equals(producto.ProductoId)).ToArray()
+                ProductoImagenes = db.ProductoImagenes.Include(x => x.Imagen).Where(x => x.ProductId.Equals(producto.ProductId)).ToArray()
             };
             //viewmodel.NombreImagen = db.ProductoImagenes.Where(x => x.ProductoId.Equals(producto.ProductoId)).FirstOrDefault().Imagen.Nombre;
             return View(viewmodel);
@@ -186,6 +188,7 @@ namespace Vitro.Controllers
             {
                 var viewmodel = new Models.ProductoViewModel()
                 {
+
                     ProductoId = model.ProductoId,
                     Pais = model.Pais,
                     Marca = model.Marca,
@@ -230,7 +233,7 @@ namespace Vitro.Controllers
                 return View("Edit", viewmodel);
             }
 
-            var producto = db.Productos.Where(x => x.ProductoId.Equals(model.ProductoId)).FirstOrDefault();
+            var producto = db.TbProduct.Where(x => x.ProductId.Equals(model.ProductoId)).FirstOrDefault();
             producto.SAP = model.SAP;
             producto.NAGS = model.NAGS;
             producto.ModeloId = model.Modelo;
@@ -260,7 +263,7 @@ namespace Vitro.Controllers
 
             if (model.Files[0] != null && model.Files.Length > 0)
             {
-                db.ProductoImagenes.RemoveRange(db.ProductoImagenes.Where(x => x.ProductoId.Equals(producto.ProductoId)).ToArray());
+                db.ProductoImagenes.RemoveRange(db.ProductoImagenes.Where(x => x.ProductoId.Equals(producto.ProductId)).ToArray());
                 foreach (var file in model.Files)
                 {
                     var imagen = new VitroSql.Imagen()
@@ -277,7 +280,7 @@ namespace Vitro.Controllers
                     {
                         ProductoImagenId = $"{Guid.NewGuid()}",
                         ImagenId = imagen.ImagenId,
-                        ProductoId = producto.ProductoId
+                        ProductoId = producto.ProductId
                     });
                     ServerUploadsFolder();
                     file.SaveAs(Path.Combine(Server.MapPath("~/Resources/Uploads"), Path.GetFileName(file.FileName)));
@@ -295,7 +298,7 @@ namespace Vitro.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (!db.Productos.Any(x => x.ProductoId.Equals(id)))
+            if (!db.TbProduct.Any(x => x.ProductId.Equals(id)))
             {
                 return HttpNotFound();
             }
@@ -320,11 +323,11 @@ namespace Vitro.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            if (db.Productos.Any(x => x.ProductoId.Equals(id)))
+            if (db.TbProduct.Any(x => x.ProductId.Equals(id)))
             {
-                var producto = db.Productos.Where(x => x.ProductoId.Equals(id)).FirstOrDefault();
-                db.ProductoImagenes.RemoveRange(db.ProductoImagenes.Where(x => x.ProductoId.Equals(producto.ProductoId)));
-                db.Productos.Remove(producto);
+                var producto = db.TbProduct.Where(x => x.ProductId.Equals(id)).FirstOrDefault();
+                db.ProductoImagenes.RemoveRange(db.ProductoImagenes.Where(x => x.ProductoId.Equals(producto.ProductId)));
+                db.TbProduct.Remove(producto);
                 db.SaveChanges();
             }
             else
@@ -354,6 +357,7 @@ namespace Vitro.Controllers
             {
                 var viewmodel = new Models.ProductoViewModel()
                 {
+                    
                     ProductoId = model.ProductoId,
                     Pais = model.Pais,
                     Marca = model.Marca,
@@ -397,11 +401,15 @@ namespace Vitro.Controllers
                 return View("Create", viewmodel);
             }
 
-            var producto = new VitroSql.Producto()
+            var user = db.Users.Include(x => x.Pais).Where(x => x.UserName.Equals(User.Identity.Name)).FirstOrDefault();
+            var _clasificacion = db.Clasificaciones.Where(x => x.ClasificacionId.Equals(model.Clasificacion)).FirstOrDefault();
+            var producto = new VitroSql.TbProduct()
             {
-                ProductoId = $"{Guid.NewGuid()}",
+                PaisId = model.Pais,
+                ProductId = $"{Guid.NewGuid()}",
                 SAP = model.SAP,
                 NAGS = model.NAGS,
+                MarcaId = model.Marca,
                 ModeloId = model.Modelo,
                 StartYear = model.StartYear,
                 EndYear = model.EndYear,
@@ -422,12 +430,14 @@ namespace Vitro.Controllers
                 Antena = model.Antena,
                 SubEnsamble = model.SubEnsamble,
                 Homologo = model.Homologo,
+                Clasificacion = _clasificacion.Nombre,
                 MercadoId = model.Mercado,
                 ProcedenciaId = model.Procedencia,
+                CreadoPor = user.FullName,
                 Activo = true,
                 FechaCreacion = DateTime.Now
             };
-            db.Productos.Add(producto);
+            db.TbProduct.Add(producto);
 
             if (model.Files[0] != null && model.Files.Length > 0)
             {
@@ -444,78 +454,109 @@ namespace Vitro.Controllers
                     };
                     db.Imagenes.Add(imagen);
 
-                    db.ProductoImagenes.Add(new VitroSql.ProductoImagen()
-                    {
-                        ProductoImagenId = $"{Guid.NewGuid()}",
-                        ImagenId = imagen.ImagenId,
-                        ProductoId = producto.ProductoId
-                    });
-
+                    //db.ProductoImagenes.Add(new VitroSql.ProductoImagen()
+                    //{
+                    //    ProductoImagenId = $"{Guid.NewGuid()}",
+                    //    ImagenId = imagen.ImagenId,
+                    //    ProductoId = producto.ProductId
+                    //});
+                   
                     ServerUploadsFolder();
                     file.SaveAs(Path.Combine(Server.MapPath("~/Resources/Uploads"), Path.GetFileName(filename)));
+                    string destinationPath = Path.Combine(Server.MapPath("~/Resources/Uploads/"), filename);
+                    string extension = Path.GetExtension(filename);
+
+                    byte[] imageArray = System.IO.File.ReadAllBytes(destinationPath);
+                    byte[] Imgbytes = imageArray;
+                    db.ProductImages.Add(new ProductImages
+                    {
+                        ProductId = producto.ProductId,
+                        Sap = producto.SAP,
+                        ImagenId = Guid.NewGuid(),
+                        Nombre = filename,
+                        Posicion = 1,
+                        Contenido = Imgbytes,
+                        Extension = extension?.TrimStart('.'),
+                        FechaCreacion = DateTime.UtcNow
+                    });
+
                 }
             }
             db.SaveChanges();
-            return RedirectToAction("Index");
+            TempData["ProductoCreado"] = true;
+            return RedirectToAction("Create");
+            //return RedirectToAction("Index");
         }
 
         public ActionResult Upload(string State)
         {
-            if (!string.IsNullOrEmpty(State) && State.Equals("Fails"))
+            try
             {
-                if(TempData["ProccessFailsCount"] != null )
+                TempData.Remove("ProccessSuccessCount");
+                if (!string.IsNullOrEmpty(State) && State.Equals("Fails"))
                 {
-                    
-                     var errors = TempData["ProccessDataError"] as DataTable;
-                     var modelView = new Models.UploadViewModel();
-                    if (errors != null && errors.Rows.Count > 0)
-                    {
+                    var modelView = new Models.UploadViewModel();
 
-                        var modelList = new List<Models.LogErrorCargaViewModel>();
-                        for (int i = 0; i < errors.Rows.Count; i++)
+                    // Validación de errores de proceso
+                    //if (TempData["ProccessFailsCount"] != null)
+                    if(TempData["ProccessFailsCount"] != null && Convert.ToInt32(TempData["ProccessFailsCount"]) > 0)
+                       {
+                        var errorsTable = TempData["ProccessDataError"] as DataTable;
+
+                        if (errorsTable != null && errorsTable.Rows.Count > 0)
                         {
-                            var model = new Models.LogErrorCargaViewModel();
+                            var modelList = new List<Models.LogErrorCargaViewModel>();
+                            var columns = errorsTable.Columns;
+                            foreach (DataRow row in errorsTable.Rows)
+                            {
+                                var model = new Models.LogErrorCargaViewModel
+                                {
+                                    FechaProceso = columns.Contains("FECHA_PROCESO") && row["FECHA_PROCESO"] != DBNull.Value
+                                     ? Convert.ToDateTime(row["FECHA_PROCESO"])
+                                     : DateTime.MinValue,
 
-                            model.FechaProceso = Convert.ToDateTime(errors.Rows[i]["FECHA_PROCESO"]);
-                            model.Usuario = errors.Rows[i]["USUARIO"].ToString();
-                            model.Sap = errors.Rows[i]["SAP"].ToString();
-                            model.Fila =  Convert.ToInt32(errors.Rows[i]["FILA"]);
-                            model.Columna = errors.Rows[i]["COLUMNA"].ToString();
-                            model.ValorIncorrecto = errors.Rows[i]["VALOR_INCORRECTO"].ToString();
-                            model.DescripcionError = errors.Rows[i]["DESCRIPCION_ERROR"].ToString();
+                                                        Usuario = columns.Contains("USUARIO") ? row["USUARIO"]?.ToString() ?? string.Empty : string.Empty,
+                                                        Sap = columns.Contains("SAP") ? row["SAP"]?.ToString() ?? string.Empty : string.Empty,
+                                                        Fila = columns.Contains("FILA") && row["FILA"] != DBNull.Value
+                                     ? Convert.ToInt32(row["FILA"])
+                                     : -1,
 
-                            modelList.Add(model);
-                            
+                                    Columna = columns.Contains("COLUMNA") ? row["COLUMNA"]?.ToString() ?? string.Empty : string.Empty,
+                                    ValorIncorrecto = columns.Contains("VALOR_INCORRECTO") ? row["VALOR_INCORRECTO"]?.ToString() ?? string.Empty : string.Empty,
+                                    DescripcionError = columns.Contains("DESCRIPCION_ERROR") ? row["DESCRIPCION_ERROR"]?.ToString() ?? string.Empty : string.Empty
+                                };
+
+                                modelList.Add(model);
+                            }
+
+                            modelView.Errores = modelList;
+                            ViewBag.Errores = modelList;
+
+                            return View(modelView);
                         }
-                        modelView = new Models.UploadViewModel()
-                        {
-                            Errores = modelList
-                        };
-                        ViewBag.Errores = modelList;
-                        //return RedirectToAction("Upload", new { State = "Fails" });
+                    }
+
+                    // Validación de errores de imagen
+                    if (TempData["ErrorImageUploads"] is List<VitroSql.TempProducto> imageErrors && imageErrors.Count > 0)
+                    {
+                        modelView.TempProductos = imageErrors;
                         return View(modelView);
                     }
-                }
 
-                if (TempData["ErrorImageUploads"] != null)
-                {
-                    var errors = TempData["ErrorImageUploads"] as List<VitroSql.TempProducto>;
-                    if (errors != null && errors.Count > 0)
-                    {
-                        var model = new Models.UploadViewModel()
-                        {
-                            TempProductos = errors
-                        };
-                        return View(model);
-                    }
-                }
-                else
-                {
+                    // Si no hay errores, redirige
                     return RedirectToAction("Upload", new { State = "Upload" });
                 }
+
+                // Estado distinto a "Fails"
+                return View();
             }
-            return View();
+            catch (Exception ex)
+            {
+                // Trazabilidad del error
+                return new HttpStatusCodeResult(500, $"Error interno: {ex.Message}");
+            }
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -525,10 +566,12 @@ namespace Vitro.Controllers
             model.Recursos = "C:\\imagenes_catalogo";
 
             ServerUploadsFolder();
-            if (!model.File.FileName.Contains("plantilla_cargue_inicial.xlsx") && !model.File.FileName.Contains("plantilla_cargue_actualizar.xlsx"))
+            string fileName = Path.GetFileName(model.File.FileName);
+
+            if (fileName != "plantilla_cargue_inicial.xlsx"
+                && fileName != "plantilla_cargue_actualizar.xlsx")
             {
-               TempData["ErrorMensaje"] = null;
-               TempData["ErrorMensaje"] = string.Format($"ERROR: Este archivo no es conocido");
+                TempData["ErrorMensaje"] = "ERROR: Este Nombre de archivo no es conocido";
                 return RedirectToAction("Upload", new { State = "Fails" });
             }
 
@@ -568,7 +611,14 @@ namespace Vitro.Controllers
 
             if (table.Rows.Count > 1000)
             {
-                ModelState.AddModelError("File", "El archivo indicado supera los 100 registros máximos para procesar");
+                ModelState.AddModelError("File", "El archivo indicado supera los 1000 registros máximos para procesar");
+            }
+
+            int filaError;
+            if (ContieneImagenesPng(table, 26, out filaError))
+            {
+                TempData["ErrorMensaje"] = $"Se detectó al menos una imagen con extensión .png en la fila {filaError + 1}. Solo se permiten archivos .jpg";
+                return RedirectToAction("Upload", new { State = "Fails" });
             }
 
             if (!ModelState.IsValid)
@@ -577,8 +627,8 @@ namespace Vitro.Controllers
             }
 
             List<VitroSql.TempProducto> reg_errors = new List<VitroSql.TempProducto>();
-            DataTable Errores = new DataTable();
-           
+            //DataTable Errores = new DataTable();
+            ProcessResult Errores = new ProcessResult();
             List<string> imagenes = new List<string>();
             var listProductoImagen = new List<ProductImages>();
             var productImages = new List<ProductImages>();
@@ -698,20 +748,41 @@ namespace Vitro.Controllers
                 db.Database.CommandTimeout = 300;
             }
 
-            TempData["ProccessRowsCount"] = db.TemporalProductos.Count(x => x.Valido);
-            TempData["ErrorImageUploadsCount"] = Errores.Rows.Count;
+            TempData["ProccessDataError"] = Errores.Errores;
+            TempData["ProccessRowsCount"] = table.Rows.Count;
             TempData["ErrorImageUploads"] = reg_errors;
-            TempData["ProccessDataError"] = Errores;
-            TempData["ProccessSuccessCount"] = db.TbProduct.Count();
-            TempData["ProccessFailsCount"] = Errores.Rows.Count; //db.TemporalProductos.Count(x => !x.Valido);
+            TempData["ProccessSuccessCount"] = model.Actualizar
+              ? Errores.RowsUpdated
+              : Errores.RowsInserted;
+            TempData["ProccessFailsCount"] = Errores.ErrorsCount; //db.TemporalProductos.Count(x => !x.Valido);
 
-            if (Errores.Rows.Count > 0)
+            if (Errores.ErrorsCount > 0)
             {
+                var registros = new List<TbLogErroresCarga>();
+                foreach (DataRow row in Errores.Errores.Rows)
+                {
+                    registros.Add(new TbLogErroresCarga
+                    {
+                        FECHA_PROCESO = DateTime.Now,
+                        USUARIO = user.FullName,
+                        SAP = row.Table.Columns.Contains("SAP") ? row["SAP"]?.ToString() : null,
+                        FILA = row.Table.Columns.Contains("FILA") ? Convert.ToInt32(row["FILA"]) : 0,
+                        COLUMNA = row.Table.Columns.Contains("COLUMNA") ? row["COLUMNA"]?.ToString() : null,
+                        VALOR_INCORRECTO = row.Table.Columns.Contains("VALOR_INCORRECTO") ? row["VALOR_INCORRECTO"]?.ToString() : null,
+                        DESCRIPCION_ERROR = row.Table.Columns.Contains("DESCRIPCION_ERROR") ? row["DESCRIPCION_ERROR"]?.ToString() : null
+                    });
+                }
+
+                if (registros.Any())
+                {
+                    db.TbLogErroresCarga.AddRange(registros);
+                    db.SaveChanges();
+                }
                 return RedirectToAction("Upload", new { State = "Fails" });
             }
 
             // No hay errores, continuar con el procesamiento de imágenes
-            InsertorUpdateMaxImage(productImages, model.Actualizar, model.File.FileName, table, Errores, user.FullName);
+            InsertorUpdateMaxImage(productImages, model.Actualizar, model.File.FileName, table, Errores.Errores, user.FullName);
             return RedirectToAction("Upload", new { State = "Upload" });
         }
 
@@ -857,6 +928,7 @@ namespace Vitro.Controllers
             }
 
           var result = db.SaveChanges();
+          TempData["ErrorImageUploadsCount"] = errorImageUploadsCount;
           return result;
         }
 
@@ -990,8 +1062,75 @@ namespace Vitro.Controllers
         }
 
 
+        /// <summary>
+        /// Valida las extensiones de las columnas de imagenes de un DataTable.
+        /// Solo permite las extensiones definidas en allowedExtensions (por defecto ".jpg").
+        /// </summary>
+        /// <param name="table">DataTable con los datos del Excel.</param>
+        /// <param name="columnaInicial">Índice de la primera columna de imágenes (ej. 28).</param>
+        /// <param name="filasConErrores">Lista de índices de fila que contienen extensiones no permitidas.</param>
+        /// <returns>True si se encontraron filas con extensiones no permitidas; false en caso contrario.</returns>
+        private bool ContieneImagenesPng(DataTable table, int columnaInicial, out int filaError)
+        {
+            if (table == null)
+            {
+                throw new ArgumentNullException(nameof(table));
+            }
 
-        
+            if (columnaInicial < 0 || columnaInicial >= table.Columns.Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(columnaInicial));
+            }
+
+            filaError = -1;
+
+            for (int i = 0; i < table.Rows.Count; i++)
+            {
+                DataRow fila = table.Rows[i];
+
+                for (int j = columnaInicial; j < table.Columns.Count; j++)
+                {
+                    object celdaObj = fila[j];
+                    if (celdaObj == null)
+                    {
+                        continue;
+                    }
+
+                    string celda = celdaObj.ToString();
+                    if (string.IsNullOrWhiteSpace(celda))
+                    {
+                        continue;
+                    }
+
+                    // Normalizar posibles espacios no-break y cortar cadenas largas
+                    string[] tokens = celda
+                        .Replace("\u00A0", " ")
+                        .Trim()
+                        .Split(new[] { ' ', ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (string token in tokens)
+                    {
+                        string limpio = token.Trim('"', '\'', '(', ')', '[', ']');
+
+                        int indiceQuery = limpio.IndexOfAny(new char[] { '?', '#', '&' });
+                        if (indiceQuery >= 0)
+                        {
+                            limpio = limpio.Substring(0, indiceQuery);
+                        }
+
+                        string extension = Path.GetExtension(limpio).ToLowerInvariant();
+
+                        if (extension == ".png")
+                        {
+                            filaError = i; // guarda la fila donde ocurrió
+                            return true;   // detenemos inmediatamente
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
         private void ServerUploadsFolder()
         {
             if (!Directory.Exists(Server.MapPath("~/Resources/Uploads")))

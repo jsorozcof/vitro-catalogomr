@@ -24,9 +24,7 @@
                 {
                     <div class="form-group">
                         <label>Buscar Por:</label>&emsp;
-                        @Html.RadioButtonFor(x => x.Parametro, "SAP", new { data_role = "radio", data_style = "2", @checked = "", data_caption = "Código SAP" })
-                        @Html.RadioButtonFor(x => x.Parametro, "NAGS", new { data_role = "radio", data_style = "2", data_caption = "Código NAGS" })
-                    </div>
+                     </div>
                     <div class="form-group">
                         <label>Párametros de Búsqueda:</label>
                         @Html.TextBoxFor(x => x.Busqueda, new { data_role = "input" })
@@ -104,9 +102,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model.Productos != null && Model.Productos.Count() > 0)
+                    @if (Model.TbProduct != null && Model.TbProduct.Count() > 0)
                     {
-                        foreach (var producto in Model.Productos)
+                        foreach (var producto in Model.TbProduct)
                         {
                             <tr>
                                 <td>@producto.Modelo.Marca.Pais.Nombre</td>
@@ -158,13 +156,13 @@
                                     { <span>NO</span>}
                                 </td>
                                 <td>
-                                    @if (producto.Antena)
+                                    @if (producto.Antena == true)
                                     {<span>SI</span> }
                                     else
                                     { <span>NO</span>}
                                 </td>
                                 <td>
-                                    @if (producto.SubEnsamble)
+                                    @if (producto.SubEnsamble == true)
                                     {<span>SI</span> }
                                     else
                                     { <span>NO</span>}
@@ -192,9 +190,9 @@
                                 <td>@producto.Mercado.Nombre</td>
                                 <td>@producto.Procedencia.Nombre</td>
                                 <td>
-                                    <a href="@Url.Action("Edit","Producto",new { id=producto.ProductoId})" class="button"><span class="mif-pencil"></span></a>
-                                    <a href="@Url.Action("Details","Producto",new { id=producto.ProductoId})" class="button"><span class="mif-eye"></span></a>
-                                    <a href="@Url.Action("Delete","Producto",new { id=producto.ProductoId})" class="button"><span class="mif-bin"></span></a>
+                                    <a href="@Url.Action("Edit","Producto",new { id=producto.ProductId})" class="button"><span class="mif-pencil"></span></a>
+                                    <a href="@Url.Action("Details","Producto",new { id=producto.ProductId})" class="button"><span class="mif-eye"></span></a>
+                                    <a href="@Url.Action("Delete","Producto",new { id=producto.ProductId})" class="button"><span class="mif-bin"></span></a>
                                 </td>
                             </tr>
                         }
