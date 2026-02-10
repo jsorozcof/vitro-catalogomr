@@ -41,62 +41,154 @@ namespace VitroCore.Services
         /// <summary>
         /// Ejecuta el procedimiento almacenado para procesar productos.
         /// </summary>
-        public DataTable ProcesarProductos(DataTable productos, List<ProductImages> dataTableImagenes, string pais, bool actualizaProductos, string usuario)
+        //public DataTable ProcesarProductos(DataTable productos, List<ProductImages> dataTableImagenes, string pais, bool actualizaProductos, string usuario)
+        //{
+        //    DataTable dtErrores = new DataTable();
+
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(_connectionString))
+        //        {
+        //            conn.Open();
+        //            using (SqlCommand cmd = new SqlCommand("dbo.SP_ProcessProducts", conn))
+        //            {
+        //                cmd.CommandType = CommandType.StoredProcedure;
+
+        //                // Parámetros
+        //                cmd.Parameters.Add(new SqlParameter("@PAIS", SqlDbType.NVarChar, 100) { Value = pais });
+        //                cmd.Parameters.Add(new SqlParameter("@USERNAME", SqlDbType.NVarChar, 100) { Value = usuario });
+        //                cmd.Parameters.Add(new SqlParameter("@ACTUALIZAPRODUCTOS", SqlDbType.Bit) { Value = actualizaProductos });
+
+        //                // Convertir List<TempProducto> a DataTable
+        //                DataTable dtProductos = ConvertirADataTable(productos,usuario);
+        //                DataTable dtImagenes = ConstruirDataTableImagenes(dataTableImagenes);
+
+        //                // Parámetro de tabla (TVP)
+        //                SqlParameter tableParam = new SqlParameter("@DATA", SqlDbType.Structured)
+        //                {
+        //                    TypeName = "dbo.ProductType",
+        //                    Value = dtProductos
+        //                };
+        //                SqlParameter imgParam = new SqlParameter("@IMAGES", SqlDbType.Structured)
+        //                {
+        //                    TypeName = "dbo.ProductImagesType",
+        //                    Value = dtImagenes
+        //                };
+        //                cmd.Parameters.Add(tableParam);
+        //                cmd.Parameters.Add(imgParam);
+        //                //cmd.ExecuteNonQuery();
+        //                //// Ejecutar SP y obtener errores
+        //                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+        //                {
+        //                    da.Fill(dtErrores);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        throw new Exception("Ocurrió un error al procesar los productos en la base de datos.", ex);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("Ocurrió un error inesperado procesando los productos en la base de datos.", ex);
+
+        //    }
+
+        //    return dtErrores;
+        //}
+
+
+        public ProcessResult ProcesarProductos(
+           DataTable productos,
+           List<ProductImages> dataTableImagenes,
+           string pais,
+           bool actualizaProductos,
+           string usuario)
         {
-            DataTable dtErrores = new DataTable();
+            if (productos == null) throw new ArgumentNullException(nameof(productos));
+            if (string.IsNullOrWhiteSpace(pais)) throw new ArgumentException("El país no puede ser nulo o vacío.", nameof(pais));
+            if (string.IsNullOrWhiteSpace(usuario)) throw new ArgumentException("El usuario no puede ser nulo o vacío.", nameof(usuario));
+
+            var result = new ProcessResult();
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (var conn = new SqlConnection(_connectionString))
+                using (var cmd = new SqlCommand("dbo.SP_ProcessProducts_v2", conn))
                 {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("dbo.SP_ProcessProducts", conn))
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandTimeout = 180;
+
+                    // Parámetros de entrada
+                    cmd.Parameters.Add("@PAIS", SqlDbType.NVarChar, 100).Value = pais;
+                    cmd.Parameters.Add("@USERNAME", SqlDbType.NVarChar, 100).Value = usuario;
+                    cmd.Parameters.Add("@ACTUALIZAPRODUCTOS", SqlDbType.Bit).Value = actualizaProductos;
+
+                    // Convertir List<TempProducto> a DataTable
+                    DataTable dtProductos = ConvertirADataTable(productos, usuario);
+
+                    // TVP Productos
+                    var productParam = new SqlParameter("@DATA", SqlDbType.Structured)
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
+                        TypeName = "dbo.ProductType",
+                        Value = dtProductos
+                    };
+                    cmd.Parameters.Add(productParam);
 
-                        // Parámetros
-                        cmd.Parameters.Add(new SqlParameter("@PAIS", SqlDbType.NVarChar, 100) { Value = pais });
-                        cmd.Parameters.Add(new SqlParameter("@USERNAME", SqlDbType.NVarChar, 100) { Value = usuario });
-                        cmd.Parameters.Add(new SqlParameter("@ACTUALIZAPRODUCTOS", SqlDbType.Bit) { Value = actualizaProductos });
-
-                        // Convertir List<TempProducto> a DataTable
-                        DataTable dtProductos = ConvertirADataTable(productos,usuario);
-                        DataTable dtImagenes = ConstruirDataTableImagenes(dataTableImagenes);
-
-                        // Parámetro de tabla (TVP)
-                        SqlParameter tableParam = new SqlParameter("@DATA", SqlDbType.Structured)
-                        {
-                            TypeName = "dbo.ProductType",
-                            Value = dtProductos
-                        };
-                        SqlParameter imgParam = new SqlParameter("@IMAGES", SqlDbType.Structured)
+                    // TVP Imágenes (si aplica)
+                    if (dataTableImagenes != null && dataTableImagenes.Any())
+                    {
+                        var dtImagenes = ConstruirDataTableImagenes(dataTableImagenes);
+                        var imgParam = new SqlParameter("@IMAGES", SqlDbType.Structured)
                         {
                             TypeName = "dbo.ProductImagesType",
                             Value = dtImagenes
                         };
-                        cmd.Parameters.Add(tableParam);
                         cmd.Parameters.Add(imgParam);
-                        //cmd.ExecuteNonQuery();
-                        //// Ejecutar SP y obtener errores
-                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    }
+
+                    // Parámetros de salida
+                    var rowsInsertedParam = new SqlParameter("@RowsInserted", SqlDbType.Int) { Direction = ParameterDirection.Output };
+                    var rowsUpdatedParam = new SqlParameter("@RowsUpdated", SqlDbType.Int) { Direction = ParameterDirection.Output };
+                    var errorsCountParam = new SqlParameter("@ErrorsCount", SqlDbType.Int) { Direction = ParameterDirection.Output };
+
+                    cmd.Parameters.Add(rowsInsertedParam);
+                    cmd.Parameters.Add(rowsUpdatedParam);
+                    cmd.Parameters.Add(errorsCountParam);
+
+                    conn.Open();
+
+                    // Usamos DataAdapter porque el SP devuelve 2 resultsets
+                    using (var da = new SqlDataAdapter(cmd))
+                    {
+                        var ds = new DataSet();
+                        da.Fill(ds);
+
+                        if (ds.Tables.Count > 0)
                         {
-                            da.Fill(dtErrores);
+                            // Primer resultset → errores
+                            result.Errores = ds.Tables[0];
                         }
                     }
+
+                    // Mapear parámetros de salida
+                    result.RowsInserted = rowsInsertedParam.Value != DBNull.Value ? (int)rowsInsertedParam.Value : 0;
+                    result.RowsUpdated = rowsUpdatedParam.Value != DBNull.Value ? (int)rowsUpdatedParam.Value : 0;
+                    result.ErrorsCount = errorsCountParam.Value != DBNull.Value ? (int)errorsCountParam.Value : 0;
                 }
             }
             catch (SqlException ex)
             {
-                throw new Exception("Ocurrió un error al procesar los productos en la base de datos.", ex);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ocurrió un error inesperado procesando los productos en la base de datos.", ex);
-
+                throw new DataException("Error SQL al procesar los productos.", ex);
             }
 
-            return dtErrores;
+            return result;
         }
+
+
+
+
 
         /// <summary>
         /// Obtiene los errores almacenados en la tabla LogErroresCarga.

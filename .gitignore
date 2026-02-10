@@ -5,3 +5,8 @@
 /Vitro/Web.config
 /Vitro/Web.Debug.config
 /Vitro/Web.Release.config
+/Vitro/obj/Release/TransformWebConfig/original/Web.config
+/Vitro/obj/Release/TransformWebConfig/transformed/Web.config
+/Vitro/obj/Release/Package/PackageTmp/Web.config
+/Vitro/Web.config
+/VitroCore/bin/Debug/VitroCore.dll
